@@ -1,0 +1,50 @@
+use #future(all)
+let html = $import(html)
+let var, Rule from $import(css)
+let initPageFormat = $import(initPageFormat)
+
+for component in os.Path("components").walk()
+	...import($String($component).replace(.plume, $("")))
+end
+
+Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
+	if not filename.find("%.html^", ?rich)
+		set filename = $filename\.html
+	end
+
+	let outputPath = $ os.Path(filename)
+
+	@outputPath.write
+		@html.Head
+			@html.Style
+				@Rule(:root)
+					...initPageFormat($pageFormat, landscape: $landscape)
+
+					$var(pageMarginTop):    20mm
+					$var(pageMarginBottom): 20mm
+					$var(pageMarginLeft):   20mm
+					$var(pageMarginRight):  20mm
+					$var(pageMarginGutter): 0
+				end
+				
+				for stylesheet in os.Path("css").walk()
+					if stylesheet.isFile()
+						$stylesheet.read()
+					end
+				end
+			end
+		end
+
+		@html.Body
+			$content
+		end
+
+		@html.Script
+			for script in os.Path("js").walk()
+				if script.isFile()
+					$script.read()
+				end
+			end
+		end
+	end
+end

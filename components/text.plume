@@ -1,0 +1,2 @@
+let html = $import(html)
+Par: $html.P

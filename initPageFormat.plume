@@ -1,0 +1,25 @@
+let var from $import(css)
+
+macro(String pageFormat, ?landscape)
+	let w,  h
+
+	if pageFormat.sub(1, 1) == "A"
+		set w, h = (1189, 841)
+	else
+		raise Unknown page format "$pageFormat"
+	end
+
+	let subdiv = $(Number(pageFormat.sub(2, 2)))
+
+	for i in seq(subdiv)
+		set w /= 2
+		set w, h = ($h, $w)
+	end
+
+	if landscape and w<h or not landscape and w>h
+		set w, h = ($h, $w)
+	end
+
+	$var(pageWidth):  $w\mm
+	$var(pageHeight): $h\mm
+end

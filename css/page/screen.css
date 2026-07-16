@@ -1,0 +1,24 @@
+@media screen {	
+	:root{
+		--preview-page-border-radius: 2mm;
+		--preview-page-shadow: 0px 5px 8px 0px #555;
+
+		--preview-page-margin-bottom: 10mm;
+		--preview-margin-top:         20mm;
+	}
+
+	body {
+		margin-top: var(--preview-margin-top);
+		background: var(--preview-background-color);
+	}
+
+	.page {
+		background: white;
+
+		margin-bottom: var(--preview-page-margin-bottom);
+		border-radius: var(--preview-page-border-radius);
+		box-shadow:    var(--preview-page-shadow);
+
+		margin-inline: auto;
+	}
+}

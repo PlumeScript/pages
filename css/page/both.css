@@ -1,0 +1,9 @@
+.page {
+	width:  var(--page-width);
+	height: var(--page-height);
+
+	padding-top:    var(--page-margin-top);
+	padding-bottom: var(--page-margin-bottom);
+	padding-left:   var(--page-margin-left);
+	padding-right:  var(--page-margin-right);
+}

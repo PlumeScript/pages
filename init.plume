@@ -26,6 +26,7 @@ use #future(all)
 let html = $import(html)
 let var, Rule from $import(css)
 let initPageFormat = $import(initPageFormat)
+let context = $import(context)
 
 for component in os.Path("components").walk()
 	...import($String($component).replace(.plume, $("")))

@@ -1,0 +1,13 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+formatNumbering1: $Context(1\.)
+formatNumbering2: $Context(*a)
+formatNumbering3: $Context(*.1)
+formatNumbering4: $Context(*.1)
+formatNumbering5: $Context(*.1)
+formatNumbering6: $Context(*.1)

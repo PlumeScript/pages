@@ -5,6 +5,76 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-Title1: macro(content)
-	$content
+use #future(all)
+let html = $import(html)
+let context = $import(context)
+
+let numberTracking = (0, 0, 0, 0, 0, 0)
+
+macro formatNumber(format, number)
+	if format=="1"
+		$number
+	end
+end
+
+macro applyFormatNumbering(level, format)
+	let key = formatNumbering$level
+	set format = $ String(format or context[key]())
+
+	let result
+	let count = $level
+	@html.Span(class: page--title-number)
+		while format
+			let find = $ format.find("[aiIA1*].-\$", ?rich)
+			$ print(find)
+			if find
+				let action   = $ find.sub(1, 1)
+				let leftover = $ find.sub(2, -1)
+				let formated = if action == "*"
+					if count==1
+						raise Cannot using `*` in first-level header.
+					end
+					$ applyFormatNumbering(count-1, empty)
+				else
+					$ formatNumber(action, numberTracking[count])
+				end
+				set result = $formated$leftover$result
+				set count   -= 1
+			else
+				break
+			end
+		end
+		$result
+	end
+end
+
+ref Heading: macro(String title, Number level: 1, formatNumbering:, ?hideNumbering, ?noNumbering)
+	if level<1 or level>6
+		raise Level must be between 1 and 6, not $level.
+	end
+	if hideNumbering and noNumbering
+		raise `?noNumbering` and `?hideNumbering` flags are incompatibles.
+	end
+
+	if not noNumbering
+		for i in seq(level+1, 6)
+			set numberTracking[i] = 0
+		end
+		set numberTracking[level] += 1
+	end
+
+	if not hideNumbering
+		set title = $applyFormatNumbering($level, $formatNumbering)$html.Span($title, class: page--title-body)
+	end
+
+	let key = H$level
+	$html[key]($title)
+end
+
+for level in seq(6)
+	let key = H$level
+	key: macro(args)
+		// set args.level = $level
+		// $Heading(...args)
+	end
 end

@@ -1,3 +1,10 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
 function createPage(parent) {
   var page = document.createElement('div');
   page.className = 'page';

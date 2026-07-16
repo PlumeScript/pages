@@ -1,23 +1,43 @@
-function createPage() {
+function createPage(parent) {
   var page = document.createElement('div');
   page.className = 'page';
   
+  parent.appendChild(page)
+
   return page;
 }
 
-function checkPageOverflow(parent, child) {
+function elOverflow(parent, child) {
+  child = child.cloneNode(true)
+  // Save state
+  const originalOverflow = parent.style.overflow;
 
+  // For using scrollHeight
+  parent.style.overflow = 'hidden';
+
+  parent.appendChild(child);
+
+  const overflow = parent.scrollHeight > parent.clientHeight;
+  console.log(parent.scrollHeight, parent.clientHeight, overflow)
+  // restore
+  parent.removeChild(child);
+  parent.style.overflow = originalOverflow;
+
+  return overflow
 }
 
 function insertElements(source, dest) {
   while (source.firstChild) {
-    checkPageOverflow(currentPage, body.firstChild)
+    if (elOverflow(dest, source.firstChild) && dest.childElementCount > 0) {
+      return;
+    }
     dest.appendChild(source.firstChild);
   }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  const body = document.body;
+  const body = document.body.cloneNode(true);
+  document.body.innerHTML = ''
   
   Array.from(body.childNodes).forEach(node => {
     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
@@ -27,8 +47,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  var currentPage = createPage()
-  insertElements(body, currentPage)
-  body.appendChild(currentPage)
-  
+  while (body.firstChild) {
+    var currentPage = createPage(document.body)
+    insertElements(body, currentPage)
+  }
 });

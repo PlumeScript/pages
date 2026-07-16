@@ -1,9 +1,0 @@
-use .
-
-@Document(filename: documentation)
-	$Title1(Documentation)
-
-	@P
-		
-	end
-end

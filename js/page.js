@@ -25,7 +25,7 @@ function elOverflow(parent, child) {
   parent.appendChild(child);
 
   const overflow = parent.scrollHeight > parent.clientHeight;
-  console.log(parent.scrollHeight, parent.clientHeight, overflow)
+  
   // restore
   parent.removeChild(child);
   parent.style.overflow = originalOverflow;

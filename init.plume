@@ -32,6 +32,8 @@ for component in os.Path("components").walk()
 	...import($String($component).replace(.plume, $("")))
 end
 
+pagesContext: $context
+
 Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
 	if not filename.find("%.html^", ?rich)
 		set filename = $filename\.html

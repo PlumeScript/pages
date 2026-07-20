@@ -130,7 +130,7 @@ ref heading: macro(String title, Number level: 1, formatNumbering:, ?hideNumberi
 		set numberTracking[level] += 1
 	end
 
-	if not hideNumbering
+	if not hideNumbering and not noNumbering
 		set title = do
 			@html.Span(class: page--title-number)
 				$applyFormatNumbering($level, $formatNumbering)

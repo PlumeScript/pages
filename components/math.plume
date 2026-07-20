@@ -1,0 +1,11 @@
+use #future(all)
+let html    = $import(html)
+let context = $import(context)
+
+formula: macro(content, processor:, ?display)
+	set processor = $ processor or context.formulaProcessor()
+	if processor != "tex" and processor != "ascii"
+		raise Unsuported processor `$processor`.
+	end
+	$html.Script($content, type: math/$processor$(display and " ;mode=display"))
+end

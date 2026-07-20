@@ -11,3 +11,5 @@ formatNumbering3: $Context(*.1)
 formatNumbering4: $Context(*.1)
 formatNumbering5: $Context(*.1)
 formatNumbering6: $Context(*.1)
+
+formulaProcessor: $Context(tex)

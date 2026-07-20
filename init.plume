@@ -60,6 +60,8 @@ Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
 					end
 				end
 			end
+
+			$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js, ?defer)
 		end
 
 		@html.Body

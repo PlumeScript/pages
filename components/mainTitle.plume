@@ -1,0 +1,30 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+use #future(all)
+let html = $import(html)
+
+MainTitle: macro(title:, subtitle:, author:, date:, institution:)
+	@html.Div(class: pages--main-title)
+		$html.H1($title, class: pages--main-title--title)
+		if subtitle
+			$html.H2($subtitle, class: pages--main-title--subtitle)
+		end
+		if author
+			$html.P($author, class: pages--main-title--author)
+		end
+		if date or institution
+			@html.Div(class: class: pages--main-title--author-date-wrapper)
+				if date
+					$html.P($date, class: pages--main-title--date)
+				end
+				if institution
+					$html.P($institution, class: pages--main-title--institution)
+				end
+			end
+		end
+	end
+end

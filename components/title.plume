@@ -115,7 +115,7 @@ headingSetCounter: macro(level, Number value)
 	set numberTracking[level] = $value
 end
 
-ref Heading: macro(String title, Number level: 1, formatNumbering:, ?hideNumbering, ?noNumbering)
+ref heading: macro(String title, Number level: 1, formatNumbering:, ?hideNumbering, ?noNumbering)
 	if level<1 or level>6
 		raise Level must be between 1 and 6, not $level.
 	end

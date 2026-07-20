@@ -19,6 +19,10 @@ Licensed under the MIT License — see LICENSE for details.
 	padding-top: var(--space-1x);
 }
 
+.pages--frame--blockquote:has(> .pages--frame--blockquote:last-child) {
+	padding-bottom: 0;
+}
+
 .pages--frame--blockquote--title  {
 	font-weight: bold;
 	margin-bottom: var(--space-1x);

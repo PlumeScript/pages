@@ -6,7 +6,7 @@ Licensed under the MIT License — see LICENSE for details.
 */
 
 :root {
-	--font-title: "Rosemary";
+	--font-title: "Arial";
 	--font-body: "Lato Regular";
 	--text-xs:   0.75rem;
 	--text-sm:   0.875rem;
@@ -53,25 +53,25 @@ h1, h2, h3, h4, h5 {
 }
 
 h1 {
-  font-size: var(--text-4xl);
+  font-size: var(--text-3xl);
   line-height: var(--leading-tight);
   margin-top: 0;
   margin-bottom: var(--space-2x);
 }
 h2 {
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   line-height: var(--leading-tight);
   margin-top: var(--space-4x);
   margin-bottom: var(--space-2x);
 }
 h3 {
-  font-size: var(--text-2xl);
+  font-size: var(--text-xl);
   line-height: var(--leading-tight);
   margin-top: var(--space-3x);
   margin-bottom: var(--space-1x);
 }
 h4 {
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   line-height: var(--leading-normal);
   margin-top: var(--space-2x);
   margin-bottom: var(--space-1x);

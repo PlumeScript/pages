@@ -7,3 +7,19 @@ Licensed under the MIT License — see LICENSE for details.
 
 let html = $import(html)
 Par: $html.P
+
+bold: macro(content)
+	$html.Span($content, class: pages--text--bold)
+end
+
+italic: macro(content)
+	$html.Span($content, class: pages--text--italic)
+end
+
+underline: macro(content)
+	$html.Span($content, class: pages--text--underline)
+end
+
+striped: macro(content)
+	$html.Span($content, class: pages--text--striped)
+end

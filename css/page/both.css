@@ -13,4 +13,7 @@ Licensed under the MIT License — see LICENSE for details.
 	padding-bottom: var(--page-margin-bottom);
 	padding-left:   var(--page-margin-left);
 	padding-right:  var(--page-margin-right);
+
+	display: flex;
+	flex-direction: column;
 }

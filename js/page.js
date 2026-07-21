@@ -15,16 +15,16 @@ function createPage(parent) {
 }
 
 function elOverflow(parent, child) {
-  child = child.cloneNode(true)
   // Save state
   const originalOverflow = parent.style.overflow;
 
   // For using scrollHeight
   parent.style.overflow = 'hidden';
 
+  child = child.cloneNode(true)
   parent.appendChild(child);
 
-  const overflow = parent.scrollHeight > parent.clientHeight;
+  const overflow = parent.clientHeight - parent.scrollHeight;
   
   // restore
   parent.removeChild(child);
@@ -35,14 +35,19 @@ function elOverflow(parent, child) {
 
 function insertElements(source, dest) {
   while (source.firstChild) {
-    if (elOverflow(dest, source.firstChild) && dest.childElementCount > 0) {
+    if (source.firstChild.classList.contains('pages--flow--newpage')) {
+      dest.appendChild(source.firstChild);
+      return
+    }
+
+    if ((elOverflow(dest, source.firstChild) < 0 && dest.childElementCount > 0)) {
       return;
     }
     dest.appendChild(source.firstChild);
   }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+function makePages() {
   const body = document.body.cloneNode(true);
   document.body.innerHTML = ''
   
@@ -58,4 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var currentPage = createPage(document.body)
     insertElements(body, currentPage)
   }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  makePages();
 });

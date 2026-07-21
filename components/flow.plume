@@ -1,0 +1,16 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+use #future(all)
+let html = $import(html)
+
+hline: $html.Hr(class:pages--flow--hline)
+newline: $html.Div($empty, class:pages--flow--newline)
+newpage: $html.Div($empty, class:pages--flow--newpage)
+
+hspace: $html.Span($empty, class: pages--flow--hspace)
+vspace: $html.Div($empty, class: pages--flow--vspace)

@@ -5,4 +5,28 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-List: a
+use #future(all)
+let html = $import(html)
+let css  = $import(css)
+
+List: macro( bullet: •, Number indent: 4, Number columns: 1, ...items)
+	let style = @css.css
+		gridTemplateColumns: repeat($columns, 1fr)
+		paddingLeft: calc($indent * var(--space-1x))
+	end
+	
+	@html.Div(class: pages--list, style: $style)
+		for item in items
+			@html.Div(class: pages--list--item)
+				if bullet
+					@html.Span(class: pages--list--item--bullet)
+						$bullet
+					end
+				end
+				@html.Span(class: pages--list--item--body)
+					$item
+				end
+			end
+		end
+	end
+end

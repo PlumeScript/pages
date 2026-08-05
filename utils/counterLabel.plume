@@ -1,0 +1,103 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+use #future(all)
+let context = $import(context)
+
+macro intToLatin(n)
+	if n==0
+		// By convention
+	elseif n==1
+		I
+	elseif n==2
+		II
+	elseif n==3
+		III
+	elseif n==4
+		IV
+	elseif n<=8
+		V$intToLatin($(n-5))
+	elseif n==9
+		IX
+	elseif n<20
+		X$intToLatin($(n-10))
+	elseif n<30
+		XX$intToLatin($(n-20))
+	elseif n<40
+		XXX$intToLatin($(n-30))
+	elseif n<50
+		XL$intToLatin($(n-40))
+	elseif n<90
+		L$intToLatin($(n-50))
+	elseif n<100
+		XC$intToLatin($(n-90))
+	elseif n<200
+		C$intToLatin($(n-100))
+	elseif n<300
+		CC$intToLatin($(n-200))
+	elseif n<400
+		CCC$intToLatin($(n-300))
+	elseif n<500
+		CD$intToLatin($(n-400))
+	elseif n<900
+		D$intToLatin($(n-500))
+	elseif n<1000
+		CM$intToLatin($(n-900))
+	elseif n<2000
+		M$intToLatin($(n-1000))
+	else
+		raise Cannot convert $n into latin number.
+	end
+end
+
+let alpha = abcdefghijklmnopqrstuvwxyz
+macro formatNumber(format, number)
+	if format=="1"
+		$number
+	elseif format=="a"
+		$ alpha.sub(number)
+	elseif format=="A"
+		$ alpha.sub(number).upper()
+	elseif format=="I"
+		$ intToLatin(number)
+	elseif format=="i"
+		$ intToLatin(number).lower()
+	end
+end
+
+ref applyFormatNumbering: macro (level, format, tracker)
+	let key = formatNumbering$level
+	set format = $ String(format or context[key]())
+
+	let result
+	let count = $level
+	
+	while true
+		let current  = $format.find([aiAI1*][^aiAI1*]-\$, ?rich)
+		if not current
+			set result = $format$result
+			break
+		end
+		let action   = $current.sub(1)
+		let leftover = $current.sub(2, -1)
+
+		set result = $leftover$result
+		if action == "*"
+			if level == 1
+				raise Cannot use * in first level header
+			end
+			
+			set result = $applyFormatNumbering($count, $empty, $tracker)$result
+		else
+			set result = $formatNumber($action, $tracker[count])$result
+		end
+
+		set format = $ format.sub(1, -len(current)-1)
+		set count = $ count-1
+	end
+	$result
+
+end

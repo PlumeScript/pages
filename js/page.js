@@ -8,6 +8,12 @@ Licensed under the MIT License — see LICENSE for details.
 // Captured during parsing, before MathJax (defer) consumes the math scripts.
 const hasMath = !!document.querySelector('script[type^="math/"]');
 
+// Signal de fin de rendu pour l'hôte (Calame) : se résout une fois la page
+// paginée et espacée, après MathJax le cas échéant.
+window.__pagesReady = new Promise((resolve) => {
+  window.__pagesReadyResolve = resolve;
+});
+
 function createPage(parent) {
   var page = document.createElement('div');
   page.className = 'page';
@@ -132,13 +138,16 @@ document.addEventListener('DOMContentLoaded', function () {
   // Paragraphs are built before MathJax typesets, so a formula script (with
   // .pages--as-inline) is wrapped in its <p> before MathJax replaces it.
   autoParagraph(document.body);
+  const finish = () => {
+    makePages();
+    addSpacing();
+    window.__pagesReadyResolve();
+  };
   if (window.MathJax && window.MathJax.startup && hasMath) {
     // Resolves once MathJax has finished typesetting; .catch paginates anyway
     // if MathJax fails (CDN down, render error).
-    window.MathJax.startup.promise.then(() => { makePages(); addSpacing(); })
-      .catch(() => { makePages(); addSpacing(); });
+    window.MathJax.startup.promise.then(finish).catch(finish);
   } else {
-    makePages();
-    addSpacing();
+    finish();
   }
 });

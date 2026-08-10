@@ -36,7 +36,7 @@ pagesContext: $context
 
 Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
 	if not filename.find("%.html^", ?rich)
-		set filename = $filename\.html
+		set filename = $filename\0.html
 	end
 
 	let outputPath = $ os.Path(filename)

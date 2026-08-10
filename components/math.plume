@@ -1,6 +1,6 @@
 use #future(all)
 let html    = $import(html)
-let context = $import(context)
+let context = $import(../context)
 
 formula: macro(content, processor:, ?display)
 	set processor = $ processor or context.formulaProcessor()

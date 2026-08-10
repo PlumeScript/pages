@@ -9,8 +9,8 @@ use #future(all)
 let html = $import(html)
 let css  = $import(css)
 
-let context = $import(context)
-let applyFormatNumbering from $import(./utils/counterLabel)
+let context = $import(../context)
+let applyFormatNumbering from $import(../utils/counterLabel)
 
 let numberTracking = (0, 0, 0, 0, 0, 0)
 let listDeep = 0

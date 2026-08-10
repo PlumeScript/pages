@@ -25,11 +25,11 @@ SOFTWARE.
 use #future(all)
 let html = $import(html)
 let var, Rule from $import(css)
-let initPageFormat = $import(initPageFormat)
-let context = $import(context)
-let cleanImported = $import(utils/cleanImported)
+let initPageFormat = $import(./initPageFormat)
+let context = $import(./context)
+let cleanImported = $import(./utils/cleanImported)
 
-for component in os.Path("components").walk()
+for component in os.Path("./components").walk()
 	...import($String($component).replace(.plume, $("")))
 end
 
@@ -55,7 +55,7 @@ Document: macro(content, filename:, pageFormat: A4, ?paginated, ?landscape)
 					$var(pageMarginGutter): 0
 				end
 				
-				for stylesheet in os.Path("css").walk()
+				for stylesheet in os.Path("./css").walk()
 					if stylesheet.isFile()
 						$cleanImported($stylesheet.read())
 					end
@@ -70,7 +70,7 @@ Document: macro(content, filename:, pageFormat: A4, ?paginated, ?landscape)
 		end
 
 		@html.Script
-			for script in os.Path("js").walk()
+			for script in os.Path("./js").walk()
 				if script.isFile()
 					$cleanImported($script.read())
 				end

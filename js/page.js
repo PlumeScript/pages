@@ -51,6 +51,8 @@ function insertElements(source, dest) {
 }
 
 function makePages() {
+  if (document.body.querySelector('.page')) return;
+  
   const body = document.body.cloneNode(true);
   document.body.innerHTML = ''
 

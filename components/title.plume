@@ -22,18 +22,13 @@ headingSetCounter: macro(level, Number value)
 	set numberTracking[level] = $value
 end
 
-ref heading: macro(String title, Number level: 1, formatNumbering:, fn:, ?hideNumbering, ?noNumbering)
+ref heading: macro(String title, Number level: 1, formatNumbering:, ?hideNumbering, ?noNumbering)
 	if level<1 or level>6
 		raise Level must be between 1 and 6, not $level.
 	end
 	if hideNumbering and noNumbering
 		raise `?noNumbering` and `?hideNumbering` flags are incompatibles.
 	end
-
-	if formatNumbering and fn
-		raise Cannot use both "formatNumbering" and "c" fn.
-	end
-	set formatNumbering = $ formatNumbering or fn
 
 	if not noNumbering
 		for i in seq(level+1, 6)

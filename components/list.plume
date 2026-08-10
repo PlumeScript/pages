@@ -15,16 +15,8 @@ let applyFormatNumbering from $import(../utils/counterLabel)
 let numberTracking = (0, 0, 0, 0, 0, 0)
 let listDeep = 0
 
-ref List: macro(bullet: •, Number indent: 4, columns:, c:, formatNumbering:, fn:, ?ordered, ...items)
-	if columns and c
-		raise Cannot use both "columns" and "c" parameters.
-	end
-	if formatNumbering and fn
-		raise Cannot use both "formatNumbering" and "c" fn.
-	end
+ref List: macro(bullet: •, Number indent: 4, Number columns: 1, formatNumbering:, ?ordered, ...items)
 
-	set columns         = $ Number(columns or c or 1)
-	set formatNumbering = $ formatNumbering or fn
 
 	let style = @css.css
 		gridTemplateColumns: repeat($columns, 1fr)
@@ -63,8 +55,4 @@ ref List: macro(bullet: •, Number indent: 4, columns:, c:, formatNumbering:, f
 			set listDeep -= 1
 		end
 	end
-end
-
-oList: macro(...args)
-	$List(?ordered, ...args)
 end

@@ -6,6 +6,6 @@ Licensed under the MIT License — see LICENSE for details.
 */
 
 .page--title-number {
-	margin-right: var(--space-2x);
+	margin-right: var(--space-1x);
 	font-variant-numeric: tabular-nums;
 }

@@ -9,7 +9,7 @@ use #future(all)
 let html = $import(html)
 
 Blockquote: macro(content, author:, title:)
-	@html.Div(class: pages--frame--blockquote pages--to-space)
+	@html.Div(class: pages--frame--blockquote pages--to-space pages--to-flow)
 		if title
 			$html.Div($title, class: pages--frame--blockquote--title)
 		end

@@ -70,6 +70,44 @@ function makePages() {
   }
 }
 
+// Wrap runs of inline content in <p> within each flow container (body and
+// .pages--to-flow elements), recursing into nested flow containers. Block
+// elements break the paragraph; .pages--flow--par is a paragraph break and is
+// dropped. Runs before pagination so pages are built from proper blocks.
+function autoParagraph(container) {
+  const fragment = document.createDocumentFragment();
+  let pending = [];
+
+  const flush = () => {
+    if (pending.length === 0) return;
+    const p = document.createElement('p');
+    pending.forEach(n => p.appendChild(n));
+    fragment.appendChild(p);
+    pending = [];
+  };
+
+  Array.from(container.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.textContent.trim() === '') {
+        if (pending.length > 0) pending.push(node);
+      } else {
+        pending.push(node);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      if (getComputedStyle(node).display.startsWith('inline')) {
+        pending.push(node);
+      } else {
+        flush();
+        if (node.classList.contains('pages--flow--par')) return;
+        if (node.classList.contains('pages--to-flow')) autoParagraph(node);
+        fragment.appendChild(node);
+      }
+    }
+  });
+  flush();
+  container.replaceChildren(fragment);
+}
+
 // Second pass, after pagination: insert a bounded vspace after each
 // .pages--to-space element and as the last element of every page, so the
 // leftover vertical space is absorbed (up to --vspace-max).
@@ -92,9 +130,10 @@ document.addEventListener('DOMContentLoaded', function () {
   if (window.MathJax && window.MathJax.startup && hasMath) {
     // Resolves once MathJax has finished typesetting; .catch paginates anyway
     // if MathJax fails (CDN down, render error).
-    window.MathJax.startup.promise.then(() => { makePages(); addSpacing(); })
-      .catch(() => { makePages(); addSpacing(); });
+    window.MathJax.startup.promise.then(() => { autoParagraph(document.body); makePages(); addSpacing(); })
+      .catch(() => { autoParagraph(document.body); makePages(); addSpacing(); });
   } else {
+    autoParagraph(document.body);
     makePages();
     addSpacing();
   }

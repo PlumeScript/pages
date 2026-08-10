@@ -9,7 +9,8 @@ use #future(all)
 let html = $import(html)
 
 hline: $html.Hr(class: pages--flow--hline pages--to-space)
-newline: $html.Div($empty, class:pages--flow--newline)
+newline: $html.Br()
+par: $html.Div($empty, class: pages--flow--par)
 newpage: $html.Div($empty, class:pages--flow--newpage)
 
 hspace: $html.Span($empty, class: pages--flow--hspace)

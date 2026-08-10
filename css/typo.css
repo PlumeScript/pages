@@ -27,6 +27,8 @@ Licensed under the MIT License — see LICENSE for details.
 	--space-4x:  2rem;
 	--space-6x:  3rem;
 
+	--vspace-max: 3rem;
+
 	--font-weight-normal: 400;
 	--font-weight-medium: 500;
 	--font-weight-bold:   700;
@@ -34,6 +36,12 @@ Licensed under the MIT License — see LICENSE for details.
 
 *, *::before, *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol {
+  list-style: none;
 }
 
 html {
@@ -56,35 +64,35 @@ h1 {
   font-size: var(--text-3xl);
   line-height: var(--leading-tight);
   margin-top: 0;
-  margin-bottom: var(--space-2x);
+  margin-bottom: var(--space-1x);
 }
 h2 {
   font-size: var(--text-2xl);
   line-height: var(--leading-tight);
-  margin-top: var(--space-4x);
-  margin-bottom: var(--space-2x);
+  margin-top: var(--space-2x);
+  margin-bottom: var(--space-1x);
 }
 h3 {
   font-size: var(--text-xl);
   line-height: var(--leading-tight);
-  margin-top: var(--space-3x);
+  margin-top: var(--space-2x);
   margin-bottom: var(--space-1x);
 }
 h4 {
   font-size: var(--text-lg);
   line-height: var(--leading-normal);
-  margin-top: var(--space-2x);
+  margin-top: var(--space-1x);
   margin-bottom: var(--space-1x);
 }
 
 p {
 	margin: 0;
-  
+
   max-width: 65ch;
   text-align: justify;
   text-wrap: pretty;
 
   &:not(:last-child) {
-  	margin-bottom: var(--space-2x);
+  	margin-bottom: var(--space-1x);
   }
 }

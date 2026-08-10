@@ -8,7 +8,7 @@ use #future(all)
 let html = $import(html)
 
 MainTitle: macro(title:, subtitle:, author:, date:, institution:)
-	@html.Div(class: pages--main-title)
+	@html.Div(class: pages--main-title pages--to-space)
 		$html.H1($title, class: pages--main-title--title)
 		if subtitle
 			$html.H2($subtitle, class: pages--main-title--subtitle)

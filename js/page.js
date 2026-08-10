@@ -53,7 +53,7 @@ function insertElements(source, dest) {
 function makePages() {
   const body = document.body.cloneNode(true);
   document.body.innerHTML = ''
-  
+
   Array.from(body.childNodes).forEach(node => {
     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
       var wrapper = document.createElement('div');
@@ -68,12 +68,32 @@ function makePages() {
   }
 }
 
+// Second pass, after pagination: insert a bounded vspace after each
+// .pages--to-space element and as the last element of every page, so the
+// leftover vertical space is absorbed (up to --vspace-max).
+function addSpacing() {
+  const makeVspace = () => {
+    const el = document.createElement('div');
+    el.className = 'pages--flow--vspace';
+    return el;
+  };
+
+  document.querySelectorAll('.page').forEach(page => {
+    page.querySelectorAll('.pages--to-space').forEach(el => {
+      el.insertAdjacentElement('afterend', makeVspace());
+    });
+    page.appendChild(makeVspace());
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   if (window.MathJax && window.MathJax.startup && hasMath) {
     // Resolves once MathJax has finished typesetting; .catch paginates anyway
     // if MathJax fails (CDN down, render error).
-    window.MathJax.startup.promise.then(makePages).catch(makePages);
+    window.MathJax.startup.promise.then(() => { makePages(); addSpacing(); })
+      .catch(() => { makePages(); addSpacing(); });
   } else {
     makePages();
+    addSpacing();
   }
 });

@@ -54,7 +54,11 @@ ref heading: macro(String title, Number level: 1, formatNumbering:, fn:, ?hideNu
 	end
 
 	let key = H$level
-	$html[key]($title)
+	if level <= 2
+		$html[key]($title, class: pages--to-space)
+	else
+		$html[key]($title)
+	end
 end
 
 for level in seq(6)

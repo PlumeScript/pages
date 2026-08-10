@@ -5,6 +5,9 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
+// Captured during parsing, before MathJax (defer) consumes the math scripts.
+const hasMath = !!document.querySelector('script[type^="math/"]');
+
 function createPage(parent) {
   var page = document.createElement('div');
   page.className = 'page';
@@ -66,5 +69,11 @@ function makePages() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  makePages();
+  if (window.MathJax && window.MathJax.startup && hasMath) {
+    // Resolves once MathJax has finished typesetting; .catch paginates anyway
+    // if MathJax fails (CDN down, render error).
+    window.MathJax.startup.promise.then(makePages).catch(makePages);
+  } else {
+    makePages();
+  }
 });

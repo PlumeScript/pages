@@ -9,16 +9,29 @@ use #future(all)
 let html = $import(html)
 let css  = $import(css)
 
-List: macro( bullet: •, Number indent: 4, Number columns: 1, ...items)
+let context = $import(context)
+let applyFormatNumbering from $import(./utils/counterLabel)
+
+let numberTracking = (0, 0, 0, 0, 0, 0)
+let listDeep = 0
+
+List: macro(bullet: •, Number indent: 4, Number columns: 1, ?ordered, ...items)
 	let style = @css.css
 		gridTemplateColumns: repeat($columns, 1fr)
 		paddingLeft: calc($indent * var(--space-1x))
 	end
+
+	if ordered
+	end
 	
 	@html.Div(class: pages--list, style: $style)
-		for item in items
+		for i, item in enumerate(items)
 			@html.Div(class: pages--list--item)
-				if bullet
+				if ordered
+					@html.Span(class: pages--list--item--bullet)
+						$i
+					end
+				elseif bullet
 					@html.Span(class: pages--list--item--bullet)
 						$bullet
 					end

@@ -35,14 +35,14 @@ end
 
 pagesContext: $context
 
-Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
-	if not filename.find("%.html^", ?rich)
-		set filename = $filename\0.html
+Document: macro(content, filename:, pageFormat: A4, ?paginated, ?landscape)
+	if filename
+		if not filename.find("%.html^", ?rich)
+			set filename = $filename\0.html
+		end
 	end
 
-	let outputPath = $ os.Path(filename)
-
-	@outputPath.write
+	let result = do
 		@html.Head
 			@html.Style
 				@Rule(:root)
@@ -76,5 +76,11 @@ Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
 				end
 			end
 		end
+	end
+
+	if filename
+		run $ os.Path(filename).write(result)
+	else
+		return $result
 	end
 end

@@ -7,5 +7,5 @@ formula: macro(content, processor:, ?display)
 	if processor != "tex" and processor != "ascii"
 		raise Unsuported processor `$processor`.
 	end
-	$html.Script($content, type: math/$processor$(display and " ;mode=display"))
+	$html.Script($content, type: math/$processor$(display and " ;mode=display"), class: pages--as-inline)
 end

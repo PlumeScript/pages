@@ -73,7 +73,9 @@ function makePages() {
 // Wrap runs of inline content in <p> within each flow container (body and
 // .pages--to-flow elements), recursing into nested flow containers. Block
 // elements break the paragraph; .pages--flow--par is a paragraph break and is
-// dropped. Runs before pagination so pages are built from proper blocks.
+// dropped. .pages--as-inline elements are treated as inline (part of the
+// paragraph) even if they render as block. Runs before pagination so pages are
+// built from proper blocks.
 function autoParagraph(container) {
   const fragment = document.createDocumentFragment();
   let pending = [];
@@ -94,7 +96,7 @@ function autoParagraph(container) {
         pending.push(node);
       }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
-      if (getComputedStyle(node).display.startsWith('inline')) {
+      if (getComputedStyle(node).display.startsWith('inline') || node.classList.contains('pages--as-inline')) {
         pending.push(node);
       } else {
         flush();
@@ -127,13 +129,15 @@ function addSpacing() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Paragraphs are built before MathJax typesets, so a formula script (with
+  // .pages--as-inline) is wrapped in its <p> before MathJax replaces it.
+  autoParagraph(document.body);
   if (window.MathJax && window.MathJax.startup && hasMath) {
     // Resolves once MathJax has finished typesetting; .catch paginates anyway
     // if MathJax fails (CDN down, render error).
-    window.MathJax.startup.promise.then(() => { autoParagraph(document.body); makePages(); addSpacing(); })
-      .catch(() => { autoParagraph(document.body); makePages(); addSpacing(); });
+    window.MathJax.startup.promise.then(() => { makePages(); addSpacing(); })
+      .catch(() => { makePages(); addSpacing(); });
   } else {
-    autoParagraph(document.body);
     makePages();
     addSpacing();
   }

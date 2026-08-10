@@ -35,6 +35,22 @@ frame (flow container) must carry it.
 **How to use it:** put it on a block container whose content is flow (paragraphs,
 lists, …) and should be auto-paragraphed.
 
+## `.pages--as-inline`
+
+> Marker: "treat this element as inline content, part of the surrounding paragraph."
+
+The `autoParagraph` pass decides inline vs block from `getComputedStyle().display`.
+An element carrying `.pages--as-inline` is always treated as inline, even if its
+CSS display is `block`, so it stays grouped with the surrounding text instead of
+breaking the paragraph.
+
+**Where it is set:** on `formula` (math.plume). A display formula renders as a
+block, but it is part of the sentence; the class keeps it in the same `<p>` as
+the surrounding text, so pagination never separates them.
+
+**How to use it:** put it on an element that renders as a block but should be
+treated as inline content (part of the paragraph).
+
 ## `.page`
 
 > Container of a page, created by the pagination engine.

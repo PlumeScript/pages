@@ -27,6 +27,7 @@ let html = $import(html)
 let var, Rule from $import(css)
 let initPageFormat = $import(initPageFormat)
 let context = $import(context)
+let cleanImported = $import(utils/cleanImported)
 
 for component in os.Path("components").walk()
 	...import($String($component).replace(.plume, $("")))
@@ -56,7 +57,7 @@ Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
 				
 				for stylesheet in os.Path("css").walk()
 					if stylesheet.isFile()
-						$stylesheet.read()
+						$cleanImported($stylesheet.read())
 					end
 				end
 			end
@@ -71,7 +72,7 @@ Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
 		@html.Script
 			for script in os.Path("js").walk()
 				if script.isFile()
-					$script.read()
+					$cleanImported($script.read())
 				end
 			end
 		end

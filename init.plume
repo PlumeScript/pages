@@ -80,7 +80,7 @@ Document: macro(content, filename:, pageFormat: A4, ?paginated, ?landscape)
 
 	if filename
 		run $ os.Path(filename).write(result)
-	else
-		return $result
 	end
+	
+	return $result
 end

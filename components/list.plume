@@ -28,9 +28,9 @@ ref List: macro(bullet: •, Number indent: 4, Number columns: 1, formatNumberin
 			set listDeep += 1
 		end
 
-		@html.Div(class: pages--list, style: $style)
+		@html.Div(class: pages--list pages--to-flow, style: $style)
 			for item in items
-				@html.Div(class: pages--list--item)
+				@html.Div(class: pages--list--item pages--to-flow)
 					if ordered
 						@html.Span(class: pages--list--item--bullet)
 							set numberTracking[listDeep] += 1
@@ -41,7 +41,7 @@ ref List: macro(bullet: •, Number indent: 4, Number columns: 1, formatNumberin
 							$bullet
 						end
 					end
-					@html.Span(class: pages--list--item--body)
+					@html.Span(class: pages--list--item--body pages--to-flow)
 						$item
 					end
 				end

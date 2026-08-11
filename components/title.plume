@@ -12,6 +12,7 @@ let applyFormatNumbering from $import(../utils/counterLabel)
 
 let numberTracking = (0, 0, 0, 0, 0, 0)
 
+// Set the numbering counter of a heading level.
 headingSetCounter: macro(level, Number value)
 	if value<=0
 		raise value must be greater than 0
@@ -22,6 +23,9 @@ headingSetCounter: macro(level, Number value)
 	set numberTracking[level] = $value
 end
 
+// Section heading, auto-numbered.
+// `marker:` see **Numbering Format**.
+// `?hideNumbering` hides the number, `?noNumbering` disables counting.
 ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNumbering)
 	let formatNumbering
 	if marker != "auto"

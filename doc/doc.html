@@ -1,0 +1,700 @@
+<head><style>:root {--page-width: 210.250mm;--page-height: 297.250mm;--page-margin-top: 20mm;--page-margin-bottom: 20mm;--page-margin-left: 20mm;--page-margin-right: 20mm;--page-margin-gutter: 0;}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+:root {
+	--preview-background-color: #DADCE0;
+	--border-color: #ddd;
+	--zebra-color: #f5f5f5;
+	--border-strong: #555;
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+:root {
+	--font-title: "Arial";
+	--font-body: "Lato Regular";
+	--text-xs:   0.75rem;
+	--text-sm:   0.875rem;
+	--text-base: 1rem;
+	--text-lg:   1.125rem;
+	--text-xl:   1.25rem;
+	--text-2xl:  1.5rem;
+	--text-3xl:  1.875rem;
+	--text-4xl:  2.25rem;
+
+	--leading-tight:    1.2;
+	--leading-normal:   1.32;
+	--leading-relaxed:  1.45;
+
+	--space-1x:  0.5rem;
+	--space-2x:  1rem;
+	--space-3x:  1.5rem;
+	--space-4x:  2rem;
+	--space-6x:  3rem;
+
+	--vspace-max: 3rem;
+
+	--font-weight-normal: 400;
+	--font-weight-medium: 500;
+	--font-weight-bold:   700;
+
+	--font-mono: "Consolas", "Courier New", monospace;
+	--radius-sm: 0.25rem;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+html {
+  font-size: 14pt;
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: #1a1a1a;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: var(--font-title);
+	break-after: avoid;
+}
+
+h1 {
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+  margin-top: var(--space-2x);
+  margin-bottom: var(--space-1x);
+}
+h2 {
+  font-size: var(--text-2xl);
+  line-height: var(--leading-tight);
+  margin-top: var(--space-1x);
+  margin-bottom: var(--space-1x);
+}
+h3 {
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  margin-top: var(--space-1x);
+  margin-bottom: var(--space-1x);
+}
+h4 {
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  margin-top: var(--space-1x);
+  margin-bottom: var(--space-1x);
+}
+
+p {
+	margin: 0;
+
+  max-width: 65ch;
+  text-align: justify;
+  text-wrap: pretty;
+
+  &:not(:last-child) {
+  	margin-bottom: var(--space-1x);
+  }
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--frame--blockquote  {
+	font-size: var(--text-base);
+	padding: var(--space-1x);
+	margin-top: var(--space-1x);
+	margin-bottom: var(--space-1x);
+	border-left: 0.25rem solid var(--border-strong);
+}
+
+.pages--frame--blockquote:has(.pages--frame--blockquote--author) {
+	padding-bottom: var(--space-1x);
+}
+.pages--frame--blockquote:has(.pages--frame--blockquote--title) {
+	padding-top: var(--space-1x);
+}
+
+.pages--frame--blockquote:has(> .pages--frame--blockquote:last-child) {
+	padding-bottom: 0;
+}
+
+.pages--frame--blockquote--title  {
+	font-weight: bold;
+	margin-bottom: var(--space-1x);
+}
+
+.pages--frame--blockquote--author  {
+	font-style: italic;
+	text-align: right;
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+/* code inline — dans le fil du texte */
+.pages--frame--code {
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	background: var(--zebra-color);
+	padding: 0.1em 0.35em;
+	border-radius: var(--radius-sm);
+}
+
+/* BlockCode — bloc de code */
+.pages--frame--blockcode {
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	line-height: var(--leading-normal);
+	background: var(--zebra-color);
+	border: 1px solid var(--border-color);
+	border-left: 0.25rem solid var(--border-strong);
+	padding: var(--space-1x);
+	margin: var(--space-1x) 0;
+	white-space: pre;
+	overflow-x: auto;
+}
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--flow--hline {
+	margin: var(--space-1x) 0;
+}
+.pages--flow--newline {}
+.pages--flow--vspace {
+	flex-grow: 1;
+	flex-basis: 0;
+	max-height: var(--vspace-max);
+}
+
+.pages--flow--vfill {
+	flex-grow: 1;
+	flex-basis: 0;
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--link {
+	
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+.pages--list {
+  display: grid;
+  gap: var(--space-1x);
+}
+
+.pages--list--item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1x);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+}
+
+.pages--list--item--bullet {
+  flex-shrink: 0;
+  font-weight: var(--font-weight-bold);
+}
+
+.pages--list--item--body {
+  flex: 1;
+}
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--main-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-1x);
+  padding: var(--space-4x) var(--space-4x);
+}
+
+.pages--main-title--title {
+  font-family: var(--font-title);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--space-1x);
+}
+
+.pages--main-title--subtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-2x);
+}
+
+.pages--main-title--author {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-1x);
+}
+
+.pages--main-title--author-date-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.pages--main-title--date {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--leading-relaxed);
+}
+
+.pages--main-title--institution {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--leading-relaxed);
+}
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  margin-top: var(--space-1x);
+  margin-bottom: var(--space-1x);
+  
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+.pages--table--cell {
+  padding: var(--space-1x) var(--space-2x);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pages--table--row-header .pages--table--cell-header {
+  font-weight: var(--font-weight-bold);
+  border-bottom: 2px solid #1a1a1a;
+}
+
+.pages--table--zebra .pages--table--row:not(.pages--table--row-header):nth-child(even) {
+  background-color: var(--zebra-color);
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--text--bold {
+	font-weight: bold;
+}
+
+.pages--text--italic {
+	font-style: italic;
+}
+
+.pages--text--underline {
+	text-decoration: underline;
+}
+
+.pages--text--striped {
+	text-decoration: line-through;
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.page--title-number {
+	margin-right: var(--space-1x);
+	font-variant-numeric: tabular-nums;
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--page {
+	width:  var(--page-width);
+	height: var(--page-height);
+
+	padding-top:    var(--page-margin-top);
+	padding-bottom: var(--page-margin-bottom);
+	padding-left:   var(--page-margin-left);
+	padding-right:  var(--page-margin-right);
+
+	display: flex;
+	flex-direction: column;
+}/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+@media print {
+}
+
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+@media screen {	
+	:root{
+		--preview-page-border-radius: 2mm;
+		--preview-page-shadow: 0px 5px 8px 0px #555;
+
+		--preview-page-margin-bottom: 10mm;
+		--preview-margin-top:         20mm;
+	}
+
+	body {
+		margin-top: var(--preview-margin-top);
+		background: var(--preview-background-color);
+	}
+
+	.pages--page {
+		background: white;
+
+		margin-bottom: var(--preview-page-margin-bottom);
+		border-radius: var(--preview-page-border-radius);
+		box-shadow:    var(--preview-page-shadow);
+
+		margin-inline: auto;
+	}
+}</style><script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js" defer></script></head><body><div class="pages--main-title pages--to-space"><h1 class="pages--main-title--title">Plume Pages Documentation</h1><h2 class="pages--main-title--subtitle">v0.3.0</h2></div><h1 class="pages--to-space"><span class="page--title-number">1.</span><span class="page--title-body">Global mechanisms</span></h1><h2 class="pages--to-space"><span class="page--title-number">1.1</span><span class="page--title-body">Paginations</span></h2>Rendering splits the body into fixed-size pages that match the page format (size and margins).<div class="pages--flow--par"></div>An element that does not fit moves whole to the next page — it is never split across pages.<div class="pages--flow--par"></div>Page breaks are driven by CSS fragmentation properties:<div class="pages--list pages--to-flow" style=""><div class="pages--list--item pages--to-flow"><span class="pages--list--item--bullet">→</span><span class="pages--list--item--body pages--to-flow"><Code class="pages--frame--code">break-before: page</Code> starts a new page (<Code class="pages--frame--code">newpage</Code> is the ready-made marker)</span></div><div class="pages--list--item pages--to-flow"><span class="pages--list--item--bullet">→</span><span class="pages--list--item--body pages--to-flow"><Code class="pages--frame--code">break-after: page</Code> makes the following content start on a new page</span></div><div class="pages--list--item pages--to-flow"><span class="pages--list--item--bullet">→</span><span class="pages--list--item--body pages--to-flow"><Code class="pages--frame--code">break-after: avoid</Code> keeps the element with the next one (no orphan heading)</span></div></div><div class="pages--flow--par"></div><Code class="pages--frame--code">.pages--page</Code> is generated by the engine — never add it manually or pagination is skipped.<h2 class="pages--to-space"><span class="page--title-number">1.2</span><span class="page--title-body">Paragraphs</span></h2>Runs of inline content are auto-wrapped in <Code class="pages--frame--code">p</Code> by a JS pass, in the body and in every nested flow container (<Code class="pages--frame--code">.pages--to-flow</Code>).<div class="pages--flow--par"></div>A block element ends the paragraph; <Code class="pages--frame--code">$par</Code> forces a paragraph break.<div class="pages--flow--par"></div>A display formula is marked <Code class="pages--frame--code">.pages--as-inline</Code> so it stays in its sentence, and pagination never splits them.<div class="pages--flow--par"></div>Plume strips blank lines, so two paragraphs of plain text joined by a blank line are concatenated. Separate them with <Code class="pages--frame--code">$par</Code>.<h2 class="pages--to-space"><span class="page--title-number">1.3</span><span class="page--title-body">Spacing</span></h2>Block components meant to be followed by flexible space carry <Code class="pages--frame--code">.pages--to-space</Code> — headings, <Code class="pages--frame--code">hline</Code>, <Code class="pages--frame--code">Blockquote</Code>, <Code class="pages--frame--code">MainTitle</Code>.<div class="pages--flow--par"></div>A JS pass inserts a bounded spacer before each <Code class="pages--frame--code">.pages--to-space</Code> and as the last element of every page, absorbing leftover space up to <Code class="pages--frame--code">--vspace-max</Code>.<div class="pages--flow--par"></div>Manual spacers: <Code class="pages--frame--code">hspace</Code> (horizontal), <Code class="pages--frame--code">vspace</Code> (bounded), <Code class="pages--frame--code">vfill</Code> (fills the page).<h2 class="pages--to-space"><span class="page--title-number">1.4</span><span class="page--title-body">Numbering Format</span></h2>Headings and ordered lists number automatically from per-level counters.<div class="pages--flow--par"></div>The format is a string over a few tokens:<div class="pages--list pages--to-flow" style=""><div class="pages--list--item pages--to-flow"><span class="pages--list--item--bullet">→</span><span class="pages--list--item--body pages--to-flow"><Code class="pages--frame--code">1</Code> decimal, <Code class="pages--frame--code">a</Code> and <Code class="pages--frame--code">A</Code> lowercase and uppercase letters, <Code class="pages--frame--code">i</Code> and <Code class="pages--frame--code">I</Code> roman numerals</span></div><div class="pages--list--item pages--to-flow"><span class="pages--list--item--bullet">→</span><span class="pages--list--item--body pages--to-flow"><Code class="pages--frame--code">*</Code> renders the parent level (forbidden at level 1)</span></div></div><div class="pages--flow--par"></div>Compose tokens freely, e.g. <Code class="pages--frame--code">a.</Code>, <Code class="pages--frame--code">1</Code>, <Code class="pages--frame--code">*.1</Code>.<div class="pages--flow--par"></div>The default per level is set by the contextual variables <Code class="pages--frame--code">formatNumbering1</Code> to <Code class="pages--frame--code">formatNumbering6</Code>.<h1 class="pages--to-space"><span class="page--title-number">2.</span><span class="page--title-body">List of components</span></h1><h2 class="pages--to-space"><span class="page--title-number">2.1</span><span class="page--title-body">Flow</span></h2><h3><span class="pages--text--italic">string</span> hline</h3>Value: <Code class="pages--frame--code">&lt;hr class=&quot;pages--flow--hline pages--to-space&quot;&gt;</Code><h3><span class="pages--text--italic">string</span> newline</h3>Value: <Code class="pages--frame--code">&lt;br&gt;</Code><h3><span class="pages--text--italic">string</span> par</h3>Value: <Code class="pages--frame--code">&lt;div class=&quot;pages--flow--par&quot;&gt;&lt;/div&gt;</Code><h3><span class="pages--text--italic">string</span> newpage</h3>Value: <Code class="pages--frame--code">&lt;div style=&quot;break-before: page;&quot;&gt;&lt;/div&gt;</Code><h3><span class="pages--text--italic">string</span> hspace</h3>Value: <Code class="pages--frame--code">&lt;span class=&quot;pages--flow--hspace&quot;&gt;&lt;/span&gt;</Code><h3><span class="pages--text--italic">string</span> vspace</h3>Value: <Code class="pages--frame--code">&lt;div class=&quot;pages--flow--vspace&quot;&gt;&lt;/div&gt;</Code><h3><span class="pages--text--italic">string</span> vfill</h3>Value: <Code class="pages--frame--code">&lt;div class=&quot;pages--flow--vfill&quot;&gt;&lt;/div&gt;</Code><h2 class="pages--to-space"><span class="page--title-number">2.2</span><span class="page--title-body">Frame</span></h2><h3><span class="pages--text--italic">macro</span> Blockquote</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">Blockquote (content, author:, title:)</Code><div class="pages--flow--par"></div></p><h3><span class="pages--text--italic">macro</span> code</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">code (content)</Code><div class="pages--flow--par"></div></p><h3><span class="pages--text--italic">macro</span> BlockCode</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">BlockCode (content)</Code><div class="pages--flow--par"></div></p><h2 class="pages--to-space"><span class="page--title-number">2.3</span><span class="page--title-body">Link</span></h2><h3><span class="pages--text--italic">macro</span> link</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">link (text, target)</Code><div class="pages--flow--par"></div></p><h2 class="pages--to-space"><span class="page--title-number">2.4</span><span class="page--title-body">List</span></h2><h3><span class="pages--text--italic">macro</span> List</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">List (Number indent: 4, Number columns: 1, marker:, rawmarker:,...items)</Code><div class="pages--flow--par"></div><div class="pages--frame--blockquote pages--to-space pages--to-flow">Bulleted or numbered list.<div class="pages--flow--par"></div>    To choose the bullet, set <Code class="pages--frame--code">marker</Code> to <Code class="pages--frame--code">bullet</Code>, <Code class="pages--frame--code">star</Code>, <Code class="pages--frame--code">arrow</Code>, <Code class="pages--frame--code">dash</Code>, <Code class="pages--frame--code">cross</Code>, <Code class="pages--frame--code">check</Code> or a custom one.<div class="pages--flow--par"></div>    To make an ordered List, set <Code class="pages--frame--code">marker</Code> to <Code class="pages--frame--code">auto</Code> or use <span class="pages--text--bold">Numbering Format</span>.<div class="pages--flow--par"></div>    If <Code class="pages--frame--code">marker</Code> value is interpreted but shouldn't be, use <Code class="pages--frame--code">rawmarker</Code> instead.<div class="pages--flow--par"></div>    <Code class="pages--frame--code">indent</Code> sets the left padding.<div class="pages--flow--par"></div></div></p><h2 class="pages--to-space"><span class="page--title-number">2.5</span><span class="page--title-body">MainTitle</span></h2><h3><span class="pages--text--italic">macro</span> MainTitle</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">MainTitle (title:, subtitle:, author:, date:, institution:)</Code><div class="pages--flow--par"></div><div class="pages--frame--blockquote pages--to-space pages--to-flow">Intended to be on first page or used as cover<div class="pages--flow--par"></div>    By default, put title - subtitle - author one below the other, and date/institution on one line and smaller.<div class="pages--flow--par"></div>    All fields are optionnals.<div class="pages--flow--par"></div></div></p><h2 class="pages--to-space"><span class="page--title-number">2.6</span><span class="page--title-body">Math</span></h2><h3><span class="pages--text--italic">macro</span> formula</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">formula (content, processor:, ?display)</Code><div class="pages--flow--par"></div><div class="pages--frame--blockquote pages--to-space pages--to-flow">Rendering a math formula<div class="pages--flow--par"></div>    <Code class="pages--frame--code">processor</Code> could be <Code class="pages--frame--code">tex</Code> <span class="pages--text--italic">(for <Code class="pages--frame--code">LaTeX</Code> syntax)</span> or <Code class="pages--frame--code">ascii</Code> <span class="pages--text--italic">(for <Code class="pages--frame--code">asciimath</Code> syntax)</span>. If empty, use contextual variable <Code class="pages--frame--code">formulaProcessor</Code>.<div class="pages--flow--par"></div>    <Code class="pages--frame--code">?display</Code> renders it as a block.<div class="pages--flow--par"></div></div></p><h2 class="pages--to-space"><span class="page--title-number">2.7</span><span class="page--title-body">Table</span></h2><h3><span class="pages--text--italic">macro</span> Table</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">Table (?zebra, ...rows)</Code><div class="pages--flow--par"></div><div class="pages--frame--blockquote pages--to-space pages--to-flow">Make a table from a List of Lists<div class="pages--flow--par"></div>    You can provide an <Code class="pages--frame--code">header</Code> key with the first row as value.<div class="pages--flow--par"></div>    <Code class="pages--frame--code">?zebra</Code> alternates row colors.<div class="pages--flow--par"></div>    <span class="pages--text--bold">Example:</span> <pre class="pages--frame--blockcode">@Table
+    header: (id, name, price)
+    - (1, Apple, 2€)
+    - (2, Orange, 3€)
+end</pre><div class="pages--flow--par"></div></div></p><h2 class="pages--to-space"><span class="page--title-number">2.8</span><span class="page--title-body">Text</span></h2><h3><span class="pages--text--italic">macro</span> Par</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">Par (...args)</Code><div class="pages--flow--par"></div></p><h3><span class="pages--text--italic">macro</span> bold</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">bold (content)</Code><div class="pages--flow--par"></div></p><h3><span class="pages--text--italic">macro</span> italic</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">italic (content)</Code><div class="pages--flow--par"></div></p><h3><span class="pages--text--italic">macro</span> underline</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">underline (content)</Code><div class="pages--flow--par"></div></p><h3><span class="pages--text--italic">macro</span> striped</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">striped (content)</Code><div class="pages--flow--par"></div></p><h2 class="pages--to-space"><span class="page--title-number">2.9</span><span class="page--title-body">Title</span></h2><h3><span class="pages--text--italic">macro</span> headingSetCounter</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">headingSetCounter (level, Number value)</Code><div class="pages--flow--par"></div><div class="pages--frame--blockquote pages--to-space pages--to-flow">Set the numbering counter of a heading level.<div class="pages--flow--par"></div></div></p><h3><span class="pages--text--italic">macro</span> heading</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">heading (String title, Number level: 1, marker:, ?hideNumbering, ?noNumbering)</Code><div class="pages--flow--par"></div><div class="pages--frame--blockquote pages--to-space pages--to-flow">Section heading, auto-numbered.<div class="pages--flow--par"></div>    <Code class="pages--frame--code">marker:</Code> see <span class="pages--text--bold">Numbering Format</span>.<div class="pages--flow--par"></div>    <Code class="pages--frame--code">?hideNumbering</Code> hides the number, <Code class="pages--frame--code">?noNumbering</Code> disables counting.<div class="pages--flow--par"></div></div></p><h3><span class="pages--text--italic">macro</span> key</h3><p><span class="pages--text--bold">Usage</span>: <Code class="pages--frame--code">key (args)</Code><div class="pages--flow--par"></div></p><h1 class="pages--to-space"><span class="page--title-number">3.</span><span class="page--title-body">List of contextual variables</span></h1><table class="pages--table pages--to-space false"><thead class="pages--table--row pages--table--row-header"><tr class="pages--table--row"><th class="pages--table--cell pages--table--cell-header">Name</th><th class="pages--table--cell pages--table--cell-header">Default value</th></tr></thead><tr class="pages--table--row"><td class="pages--table--cell">formatNumbering1</td><td class="pages--table--cell">1.</td></tr><tr class="pages--table--row"><td class="pages--table--cell">formatNumbering2</td><td class="pages--table--cell">*1</td></tr><tr class="pages--table--row"><td class="pages--table--cell">formatNumbering3</td><td class="pages--table--cell">*.1</td></tr><tr class="pages--table--row"><td class="pages--table--cell">formatNumbering4</td><td class="pages--table--cell">*.1</td></tr><tr class="pages--table--row"><td class="pages--table--cell">formatNumbering5</td><td class="pages--table--cell">*.1</td></tr><tr class="pages--table--row"><td class="pages--table--cell">formatNumbering6</td><td class="pages--table--cell">*.1</td></tr><tr class="pages--table--row"><td class="pages--table--cell">formulaProcessor</td><td class="pages--table--cell">tex</td></tr></table></body><script>/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+window.MathJax = {
+  loader: { load: ['input/asciimath'] },
+  tex: { inlineMath: [], displayMath: [] },
+  asciimath: { delimiters: [] },
+
+  startup: {
+    ready() {
+      // The legacy AsciiMath jax ignores the MathItem display flag and wraps
+      // its output in an <mstyle> that breaks display layout. This patch
+      // unwraps the <mstyle> and honors math.display.
+      // Deliberately differs from the official doc example, which recomputes
+      // display from start.delim — that is '' here and would erase the flag
+      // set by findScript below.
+      // HACK: relies on legacy internal output structure, re-test on MathJax upgrade.
+      const {AsciiMath} = MathJax._.input.asciimath_ts;
+      Object.assign(AsciiMath.prototype, {
+        _compile: AsciiMath.prototype.compile,
+        compile(math, document) {
+          const result = this._compile(math, document);
+          const mstyle = result.childNodes[0].childNodes.pop();
+          mstyle.childNodes.forEach(child => result.appendChild(child));
+          if (math.display) {
+            result.attributes.set('display', 'block');
+          }
+          return result;
+        }
+      });
+      MathJax.startup.defaultReady();
+    }
+  },
+  options: {
+    renderActions: {
+      // delimiter search; priority 10 = same slot as find.
+      // Trailing '' = document-level action only, nothing on per-item rerender.
+      findScript: [10, function (doc) {
+        const tex = doc.inputJax.find(j => j.name === 'TeX');
+        const am  = doc.inputJax.find(j => j.name === 'AsciiMath');
+        for (const node of document.querySelectorAll('script[type^="math/"]')) {
+          const jax = /ascii/.test(node.type) ? am : tex;
+          if (!jax) continue; // requested math/<format> whose input jax is not loaded
+          const display = !!node.type.match(/; *mode=display/);
+          const math = new doc.options.MathItem(node.textContent, jax, display);
+          const text = document.createTextNode('');
+          node.parentNode.replaceChild(text, node);
+          math.start = {node: text, delim: '', n: 0};
+          math.end   = {node: text, delim: '', n: 0};
+          doc.math.push(math);
+        }
+      }, '']
+    }
+  }
+}
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+// Captured during parsing, before MathJax (defer) consumes the math scripts.
+const hasMath = !!document.querySelector('script[type^="math/"]');
+
+// Signal de fin de rendu pour l'hôte (Calame) : se résout une fois la page
+// paginée et espacée, après MathJax le cas échéant.
+window.__pagesReady = new Promise((resolve) => {
+  window.__pagesReadyResolve = resolve;
+});
+
+function createPage(parent) {
+  var page = document.createElement('div');
+  page.className = 'pages--page';
+  
+  parent.appendChild(page)
+
+  return page;
+}
+
+function elOverflow(parent, child) {
+  // Save state
+  const originalOverflow = parent.style.overflow;
+
+  // For using scrollHeight
+  parent.style.overflow = 'hidden';
+
+  child = child.cloneNode(true)
+  parent.appendChild(child);
+
+  const overflow = parent.clientHeight - parent.scrollHeight;
+  
+  // restore
+  parent.removeChild(child);
+  parent.style.overflow = originalOverflow;
+
+  return overflow
+}
+
+// Does a set of elements fit on a fresh, empty page? Fallback for
+// keep-with-next: if the tied run + the overflowing element can't fit together
+// on a new page, there is no solution and we break anyway (avoid is a hint).
+function fitsOnEmptyPage(elements) {
+  const page = createPage(document.body);
+  page.style.overflow = 'hidden';
+  elements.forEach(el => page.appendChild(el.cloneNode(true)));
+  const fits = page.clientHeight - page.scrollHeight >= 0;
+  document.body.removeChild(page);
+  return fits;
+}
+
+// Read a break property. Inline style is reliable even on detached elements
+// (the $newpage marker); computed style covers stylesheet rules.
+function breakValue(el, prop) {
+  return el.style[prop] || getComputedStyle(el)[prop];
+}
+
+// Is a break forbidden between a and b? Yes when a has break-after: avoid or b
+// has break-before: avoid (keep-with-next / keep-with-previous).
+function isTied(a, b) {
+  return breakValue(a, 'breakAfter') === 'avoid' || breakValue(b, 'breakBefore') === 'avoid';
+}
+
+// Maximal trailing run of dest's children that must stay with `next`: every
+// consecutive pair (including the boundary with `next`) is tied.
+function avoidRun(dest, next) {
+  const children = Array.from(dest.children);
+  const run = [];
+  for (let i = children.length - 1; i >= 0; i--) {
+    const a = children[i];
+    const b = (i === children.length - 1) ? next : children[i + 1];
+    if (isTied(a, b)) {
+      run.unshift(a);
+    } else {
+      break;
+    }
+  }
+  return run;
+}
+
+function insertElements(source, dest) {
+  while (source.firstChild) {
+    const el = source.firstChild;
+
+    // break-before: page — start a new page.
+    if (breakValue(el, 'breakBefore') === 'page') {
+      // Only break if the current page already has content; otherwise we're at
+      // a page start and returning would loop forever on an empty page.
+      if (dest.childElementCount > 0) {
+        return;
+      }
+      // At a page start, a pure marker (empty div, e.g. $newpage) is dropped;
+      // real content falls through and is placed below.
+      if (el.childElementCount === 0 && el.textContent.trim() === '') {
+        source.removeChild(el);
+        continue;
+      }
+    }
+
+    if (elOverflow(dest, el) < 0 && dest.childElementCount > 0) {
+      // Keep-with-next: if the trailing elements are tied to el, move them to
+      // the next page so they stay with el — unless they can't fit together on
+      // a fresh page (no solution → break here anyway).
+      const run = avoidRun(dest, el);
+      if (run.length > 0 && fitsOnEmptyPage(run.concat([el]))) {
+        // Insert before a stable reference: source.firstChild changes on each
+        // insert, which would reverse the run.
+        const first = source.firstChild;
+        run.forEach(n => source.insertBefore(n, first));
+      }
+      return;
+    }
+
+    dest.appendChild(el);
+
+    // break-after: page — break after this element.
+    if (breakValue(el, 'breakAfter') === 'page') {
+      return;
+    }
+  }
+}
+
+function makePages() {
+  if (document.body.querySelector('.pages--page')) return;
+  
+  const body = document.body.cloneNode(true);
+  document.body.innerHTML = ''
+
+  Array.from(body.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
+      var wrapper = document.createElement('div');
+      node.parentNode.insertBefore(wrapper, node);
+      wrapper.appendChild(node);
+    }
+  });
+
+  while (body.firstChild) {
+    var currentPage = createPage(document.body)
+    insertElements(body, currentPage)
+  }
+}
+
+// Wrap runs of inline content in <p> within each flow container (body and
+// .pages--to-flow elements), recursing into nested flow containers. Block
+// elements break the paragraph; .pages--flow--par is a paragraph break and is
+// dropped. .pages--as-inline elements are treated as inline (part of the
+// paragraph) even if they render as block. Runs before pagination so pages are
+// built from proper blocks.
+function autoParagraph(container) {
+  const fragment = document.createDocumentFragment();
+  let pending = [];
+
+  const flush = () => {
+    if (pending.length === 0) return;
+    const p = document.createElement('p');
+    pending.forEach(n => p.appendChild(n));
+    fragment.appendChild(p);
+    pending = [];
+  };
+
+  Array.from(container.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.textContent.trim() === '') {
+        if (pending.length > 0) pending.push(node);
+      } else {
+        pending.push(node);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      if (getComputedStyle(node).display.startsWith('inline') || node.classList.contains('pages--as-inline')) {
+        pending.push(node);
+      } else {
+        flush();
+        if (node.classList.contains('pages--flow--par')) return;
+        if (node.classList.contains('pages--to-flow')) autoParagraph(node);
+        fragment.appendChild(node);
+      }
+    }
+  });
+  flush();
+  container.replaceChildren(fragment);
+}
+
+// Second pass, after pagination: insert a bounded vspace before each
+// .pages--to-space element and as the last element of every page, so the
+// leftover vertical space is absorbed (up to --vspace-max).
+function addSpacing() {
+  const makeVspace = () => {
+    const el = document.createElement('div');
+    el.className = 'pages--flow--vspace';
+    return el;
+  };
+
+  document.querySelectorAll('.pages--page').forEach(page => {
+    page.querySelectorAll('.pages--to-space').forEach(el => {
+      el.insertAdjacentElement('beforebegin', makeVspace());
+    });
+    page.appendChild(makeVspace());
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Paragraphs are built before MathJax typesets, so a formula script (with
+  // .pages--as-inline) is wrapped in its <p> before MathJax replaces it.
+  autoParagraph(document.body);
+  const finish = () => {
+    makePages();
+    addSpacing();
+    window.__pagesReadyResolve();
+  };
+  if (window.MathJax && window.MathJax.startup && hasMath) {
+    // Resolves once MathJax has finished typesetting; .catch paginates anyway
+    // if MathJax fails (CDN down, render error).
+    window.MathJax.startup.promise.then(finish).catch(finish);
+  } else {
+    finish();
+  }
+});
+</script>

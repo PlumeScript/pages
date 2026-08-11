@@ -15,6 +15,11 @@ let applyFormatNumbering from $import(../utils/counterLabel)
 let numberTracking = (0, 0, 0, 0, 0, 0)
 let listDeep = 0
 
+// Bulleted or numbered list.
+// To choose the bullet, set `marker` to `bullet`, `star`, `arrow`, `dash`, `cross`, `check` or a custom one.
+// To make an ordered List, set `marker` to `auto` or use **Numbering Format**.
+// If `marker` value is interpreted but shouldn't be, use `rawmarker` instead.
+// `indent` sets the left padding.
 ref List: macro(Number indent: 4, Number columns: 1, marker:, rawmarker:,...items)
 	let bullet, formatNumbering, ordered
 

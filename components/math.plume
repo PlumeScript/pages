@@ -2,6 +2,9 @@ use #future(all)
 let html    = $import(html)
 let context = $import(../context)
 
+// Rendering a math formula
+// `processor` could be `tex` *(for `LaTeX` syntax)* or `ascii` *(for `asciimath` syntax)*. If empty, use contextual variable `formulaProcessor`.
+// `?display` renders it as a block.
 formula: macro(content, processor:, ?display)
 	set processor = $ processor or context.formulaProcessor()
 	if processor != "tex" and processor != "ascii"

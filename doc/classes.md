@@ -7,9 +7,9 @@ engine how to treat the element.
 
 ## `.pages--to-space`
 
-> Marker: "this block should be followed by flexible spacing."
+> Marker: "this block should be preceded by flexible spacing."
 
-The `addSpacing` pass inserts a `<div class="pages--flow--vspace">` right after
+The `addSpacing` pass inserts a `<div class="pages--flow--vspace">` right before
 every `.pages--to-space` element, and one as the last element of every page.
 `.pages--flow--vspace` is a flexible spacer (`flex-grow: 1`, `max-height:
 var(--vspace-max)`) that absorbs the leftover vertical space of the page.

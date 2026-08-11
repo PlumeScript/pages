@@ -15,7 +15,7 @@ let applyFormatNumbering from $import(../utils/counterLabel)
 let numberTracking = (0, 0, 0, 0, 0, 0)
 let listDeep = 0
 
-ref List: macro(bullet: •, Number indent: 4, Number columns: 1, formatNumbering:, ?ordered, ...items)
+ref List: macro(bullet:, Number indent: 4, Number columns: 1, formatNumbering:, ?ordered, ...items)
 
 
 	let style = @css.css

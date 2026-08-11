@@ -19,3 +19,15 @@ Blockquote: macro(content, author:, title:)
 		end
 	end
 end
+
+code: macro(content)
+	@html.Tag(Code, class: pages--frame--code)
+		$content
+	end
+end
+
+BlockCode: macro(content)
+	@html.Pre(class: pages--frame--blockcode)
+		$content
+	end
+end

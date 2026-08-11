@@ -1,0 +1,29 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+/* code inline — dans le fil du texte */
+.pages--frame--code {
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	background: var(--zebra-color);
+	padding: 0.1em 0.35em;
+	border-radius: var(--radius-sm);
+}
+
+/* BlockCode — bloc de code */
+.pages--frame--blockcode {
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	line-height: var(--leading-normal);
+	background: var(--zebra-color);
+	border: 1px solid var(--border-color);
+	border-left: 0.25rem solid var(--border-strong);
+	padding: var(--space-1x);
+	margin: var(--space-1x) 0;
+	white-space: pre;
+	overflow-x: auto;
+}

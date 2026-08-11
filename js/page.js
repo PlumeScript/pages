@@ -108,7 +108,10 @@ function insertElements(source, dest) {
       // a fresh page (no solution → break here anyway).
       const run = avoidRun(dest, el);
       if (run.length > 0 && fitsOnEmptyPage(run.concat([el]))) {
-        run.forEach(n => source.insertBefore(n, source.firstChild));
+        // Insert before a stable reference: source.firstChild changes on each
+        // insert, which would reverse the run.
+        const first = source.firstChild;
+        run.forEach(n => source.insertBefore(n, first));
       }
       return;
     }

@@ -15,8 +15,17 @@ let applyFormatNumbering from $import(../utils/counterLabel)
 let numberTracking = (0, 0, 0, 0, 0, 0)
 let listDeep = 0
 
-ref List: macro(bullet:, Number indent: 4, Number columns: 1, formatNumbering:, ?ordered, ...items)
+ref List: macro(Number indent: 4, Number columns: 1, marker:, rawmarker:,...items)
+	let bullet, formatNumbering, ordered
 
+	if marker == "auto"
+		set ordered = $true
+	elseif marker.find("[aAiI1*]", ?rich)
+		set ordered = $true
+		set formatNumbering = $marker
+	else
+		set bullet = $(rawmarker or marker)
+	end
 
 	let style = @css.css
 		gridTemplateColumns: repeat($columns, 1fr)

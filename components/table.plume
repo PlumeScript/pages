@@ -5,4 +5,38 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-t: a
+use #future(all)
+let html = $import(html)
+
+Table: macro(?zebra, ...rows)
+	@html.Table(class: pages--table pages--to-space $(zebra and "pages--table--zebra"))
+		if rows.header?
+			if type(rows.header) != "table"
+				raise Header must be a table.
+			end
+			@html.Thead(class: pages--table--row pages--table--row-header)
+				@html.Tr(class: pages--table--row)
+					for cell in rows.header
+						@html.Th(class: pages--table--cell pages--table--cell-header)
+							$cell
+						end
+					end
+				end
+			end
+		end
+
+		for row in rows
+			if type(row) != "table"
+				raise Table element must be tables.
+			end
+			
+			@html.Tr(class: pages--table--row)
+				for cell in row
+					@html.Td(class: pages--table--cell)
+						$cell
+					end
+				end
+			end
+		end
+	end
+end

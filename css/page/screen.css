@@ -19,7 +19,7 @@ Licensed under the MIT License — see LICENSE for details.
 		background: var(--preview-background-color);
 	}
 
-	.page {
+	.pages--page {
 		background: white;
 
 		margin-bottom: var(--preview-page-margin-bottom);

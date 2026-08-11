@@ -51,16 +51,16 @@ the surrounding text, so pagination never separates them.
 **How to use it:** put it on an element that renders as a block but should be
 treated as inline content (part of the paragraph).
 
-## `.page`
+## `.pages--page`
 
 > Container of a page, created by the pagination engine.
 
-The `makePages` pass splits the body into `.page` elements (dimensions
+The `makePages` pass splits the body into `.pages--page` elements (dimensions
 `--page-width`/`--page-height`, margins, flex column). `addSpacing` and the
 pagination CSS rely on it.
 
-**⚠️ Never use it.** `.page` is **generated** by pagination. If you add it
-manually, the guard `if (document.body.querySelector('.page')) return;` in
+**⚠️ Never use it.** `.pages--page` is **generated** by pagination. If you add it
+manually, the guard `if (document.body.querySelector('.pages--page')) return;` in
 `makePages` assumes pagination already happened and **skips the whole split** —
 the document is no longer paginated. It is reserved for the engine.
 

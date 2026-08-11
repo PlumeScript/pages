@@ -16,7 +16,7 @@ window.__pagesReady = new Promise((resolve) => {
 
 function createPage(parent) {
   var page = document.createElement('div');
-  page.className = 'page';
+  page.className = 'pages--page';
   
   parent.appendChild(page)
 
@@ -123,7 +123,7 @@ function insertElements(source, dest) {
 }
 
 function makePages() {
-  if (document.body.querySelector('.page')) return;
+  if (document.body.querySelector('.pages--page')) return;
   
   const body = document.body.cloneNode(true);
   document.body.innerHTML = ''
@@ -192,7 +192,7 @@ function addSpacing() {
     return el;
   };
 
-  document.querySelectorAll('.page').forEach(page => {
+  document.querySelectorAll('.pages--page').forEach(page => {
     page.querySelectorAll('.pages--to-space').forEach(el => {
       el.insertAdjacentElement('afterend', makeVspace());
     });

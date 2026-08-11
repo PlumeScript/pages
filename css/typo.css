@@ -48,7 +48,7 @@ ul, ol {
 }
 
 html {
-  font-size: 16px;
+  font-size: 12pt;
   line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
 }

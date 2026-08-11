@@ -9,7 +9,6 @@ Licensed under the MIT License — see LICENSE for details.
 	margin: var(--space-1x) 0;
 }
 .pages--flow--newline {}
-.pages--flow--newpage {}
 .pages--flow--vspace {
 	flex-grow: 1;
 	flex-basis: 0;

@@ -63,3 +63,32 @@ pagination CSS rely on it.
 manually, the guard `if (document.body.querySelector('.page')) return;` in
 `makePages` assumes pagination already happened and **skips the whole split** —
 the document is no longer paginated. It is reserved for the engine.
+
+## `break-*` properties
+
+> The pagination engine respects the CSS fragmentation properties
+> `break-before`, `break-after` and `break-inside` (computed styles), so page
+> breaks can be controlled from plain CSS — no class needed.
+
+**`break-before: page`** — the element starts on a new page. If the element is
+an empty div (a pure marker, e.g. `$newpage` which outputs
+`<div style="break-before: page;"></div>`), it is dropped once the break is
+done, so it never leaves a stray empty element.
+
+**`break-after: page`** — the following content starts on a new page.
+
+**`break-after: avoid`** / **`break-before: avoid`** — forbids a break between
+the element and its neighbour (keep-with-next / keep-with-previous). Used to
+avoid orphan titles: a heading with `break-after: avoid` is never left alone at
+the bottom of a page. Consecutive `avoid` elements form a run that moves to the
+next page together. `avoid` is a hint: if the run + the following element
+cannot fit on a fresh page, the engine breaks anyway.
+
+**`break-inside: avoid`** — already satisfied by the engine: it never splits an
+element across pages (each child of the body is moved whole).
+
+The legacy aliases `page-break-before`, `page-break-after`, `page-break-inside`
+are mapped to `break-*` by the browser, so they work too.
+
+**How to use it:** set the property in a static `.css` (or inline) on a block
+element. `$newpage` is the ready-made marker for `break-before: page`.

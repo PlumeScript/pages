@@ -42,17 +42,83 @@ function elOverflow(parent, child) {
   return overflow
 }
 
+// Does a set of elements fit on a fresh, empty page? Fallback for
+// keep-with-next: if the tied run + the overflowing element can't fit together
+// on a new page, there is no solution and we break anyway (avoid is a hint).
+function fitsOnEmptyPage(elements) {
+  const page = createPage(document.body);
+  page.style.overflow = 'hidden';
+  elements.forEach(el => page.appendChild(el.cloneNode(true)));
+  const fits = page.clientHeight - page.scrollHeight >= 0;
+  document.body.removeChild(page);
+  return fits;
+}
+
+// Read a break property. Inline style is reliable even on detached elements
+// (the $newpage marker); computed style covers stylesheet rules.
+function breakValue(el, prop) {
+  return el.style[prop] || getComputedStyle(el)[prop];
+}
+
+// Is a break forbidden between a and b? Yes when a has break-after: avoid or b
+// has break-before: avoid (keep-with-next / keep-with-previous).
+function isTied(a, b) {
+  return breakValue(a, 'breakAfter') === 'avoid' || breakValue(b, 'breakBefore') === 'avoid';
+}
+
+// Maximal trailing run of dest's children that must stay with `next`: every
+// consecutive pair (including the boundary with `next`) is tied.
+function avoidRun(dest, next) {
+  const children = Array.from(dest.children);
+  const run = [];
+  for (let i = children.length - 1; i >= 0; i--) {
+    const a = children[i];
+    const b = (i === children.length - 1) ? next : children[i + 1];
+    if (isTied(a, b)) {
+      run.unshift(a);
+    } else {
+      break;
+    }
+  }
+  return run;
+}
+
 function insertElements(source, dest) {
   while (source.firstChild) {
-    if (source.firstChild.classList.contains('pages--flow--newpage')) {
-      dest.appendChild(source.firstChild);
-      return
+    const el = source.firstChild;
+
+    // break-before: page — start a new page.
+    if (breakValue(el, 'breakBefore') === 'page') {
+      // Only break if the current page already has content; otherwise we're at
+      // a page start and returning would loop forever on an empty page.
+      if (dest.childElementCount > 0) {
+        return;
+      }
+      // At a page start, a pure marker (empty div, e.g. $newpage) is dropped;
+      // real content falls through and is placed below.
+      if (el.childElementCount === 0 && el.textContent.trim() === '') {
+        source.removeChild(el);
+        continue;
+      }
     }
 
-    if ((elOverflow(dest, source.firstChild) < 0 && dest.childElementCount > 0)) {
+    if (elOverflow(dest, el) < 0 && dest.childElementCount > 0) {
+      // Keep-with-next: if the trailing elements are tied to el, move them to
+      // the next page so they stay with el — unless they can't fit together on
+      // a fresh page (no solution → break here anyway).
+      const run = avoidRun(dest, el);
+      if (run.length > 0 && fitsOnEmptyPage(run.concat([el]))) {
+        run.forEach(n => source.insertBefore(n, source.firstChild));
+      }
       return;
     }
-    dest.appendChild(source.firstChild);
+
+    dest.appendChild(el);
+
+    // break-after: page — break after this element.
+    if (breakValue(el, 'breakAfter') === 'page') {
+      return;
+    }
   }
 }
 

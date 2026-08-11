@@ -18,7 +18,19 @@ let listDeep = 0
 ref List: macro(Number indent: 4, Number columns: 1, marker:, rawmarker:,...items)
 	let bullet, formatNumbering, ordered
 
-	if marker == "auto"
+	if marker == "bullet"
+		set bullet = •
+	elseif marker == "star"
+		set bullet = ★
+	elseif marker == "arrow"
+		set bullet = →
+	elseif marker == "dash"
+		set bullet = –
+	elseif marker == "cross"
+		set bullet = ✗
+	elseif marker == "check"
+		set bullet = ✓ 
+	elseif marker == "auto"
 		set ordered = $true
 	elseif marker.find("[aAiI1*]", ?rich)
 		set ordered = $true

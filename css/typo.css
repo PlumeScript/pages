@@ -64,19 +64,19 @@ h1, h2, h3, h4, h5 {
 h1 {
   font-size: var(--text-3xl);
   line-height: var(--leading-tight);
-  margin-top: 0;
+  margin-top: var(--space-2x);
   margin-bottom: var(--space-1x);
 }
 h2 {
   font-size: var(--text-2xl);
   line-height: var(--leading-tight);
-  margin-top: var(--space-2x);
+  margin-top: var(--space-1x);
   margin-bottom: var(--space-1x);
 }
 h3 {
   font-size: var(--text-xl);
   line-height: var(--leading-tight);
-  margin-top: var(--space-2x);
+  margin-top: var(--space-1x);
   margin-bottom: var(--space-1x);
 }
 h4 {

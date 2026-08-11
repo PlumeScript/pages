@@ -8,7 +8,8 @@ Licensed under the MIT License — see LICENSE for details.
 .pages--frame--blockquote  {
 	font-size: var(--text-base);
 	padding: var(--space-1x);
-	margin: var(--space-1x) 0;
+	margin-top: var(--space-1x);
+	margin-bottom: var(--space-1x);
 	border-left: 4px solid #555;
 }
 

@@ -182,7 +182,7 @@ function autoParagraph(container) {
   container.replaceChildren(fragment);
 }
 
-// Second pass, after pagination: insert a bounded vspace after each
+// Second pass, after pagination: insert a bounded vspace before each
 // .pages--to-space element and as the last element of every page, so the
 // leftover vertical space is absorbed (up to --vspace-max).
 function addSpacing() {
@@ -194,7 +194,7 @@ function addSpacing() {
 
   document.querySelectorAll('.pages--page').forEach(page => {
     page.querySelectorAll('.pages--to-space').forEach(el => {
-      el.insertAdjacentElement('afterend', makeVspace());
+      el.insertAdjacentElement('beforebegin', makeVspace());
     });
     page.appendChild(makeVspace());
   });

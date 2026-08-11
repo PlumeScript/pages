@@ -8,7 +8,10 @@ Licensed under the MIT License — see LICENSE for details.
 .pages--table {
   width: 100%;
   border-collapse: collapse;
+  
+  margin-top: var(--space-1x);
   margin-bottom: var(--space-1x);
+  
   font-size: var(--text-base);
   line-height: var(--leading-normal);
 }

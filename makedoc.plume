@@ -20,11 +20,14 @@ macro formatLine(line)
 end
 
 @Document(filename: ./doc/doc)
-	@MainTitle
-		title: Plume Pages Documentation
+	$vfill
+    @MainTitle
+		title: $image($os.Path(./logo.svg)) Documentation
 		subtitle: v0.3.0
 	end
-	
+
+    $vfill
+    $newpage
 	$heading(Global mechanisms)
 		$heading(Paginations, level: 2)
 			Rendering splits the body into fixed-size pages that match the page format (size and margins).

@@ -1,0 +1,37 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--image {
+}
+
+.pages--image--wrapper {
+	padding: var(--space-1x);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1x);
+}
+
+.pages--image--figcaption {
+    font-size: var(--text-sm);
+    color: var(--muted);
+    text-align: center;
+    max-width: 65ch;
+}
+
+.pages--image--inline {
+	display: inline;
+	vertical-align: middle;
+}
+
+.pages--image--float-left {
+	float: left;
+}
+
+.pages--image--float-right {
+	float: right;
+}

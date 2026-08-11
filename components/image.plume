@@ -1,0 +1,126 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+use #future(all)
+let html = $import(html)
+
+// Workaround: os.Path.write doesn't support binary mode, and Plume is missing bytes manipulation features
+macro base64(path)
+	let strpath = $ String(path)
+	return @lua.eval
+		local path = "$strpath"
+		raw[
+			local f = io.open(path, "rb")
+			if not f then
+				error(string.format("Cannot read '%s' content.", path))
+			end
+			local data = f:read("*a")
+			f:close()
+
+			local bit = require("bit")
+			local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+			local out = {}
+			local i = 1
+			local n = #data
+			while i <= n do
+				local a = data:byte(i)
+				local b = data:byte(i + 1)
+				local c = data:byte(i + 2)
+				out[#out + 1] = chars:sub(bit.rshift(a, 2) + 1, bit.rshift(a, 2) + 1)
+				out[#out + 1] = chars:sub(bit.bor(bit.lshift(bit.band(a, 3), 4), bit.rshift(b or 0, 4)) + 1, bit.bor(bit.lshift(bit.band(a, 3), 4), bit.rshift(b or 0, 4)) + 1)
+				if b then
+					out[#out + 1] = chars:sub(bit.bor(bit.lshift(bit.band(b, 15), 2), bit.rshift(c or 0, 6)) + 1, bit.bor(bit.lshift(bit.band(b, 15), 2), bit.rshift(c or 0, 6)) + 1)
+				else
+					out[#out + 1] = "="
+				end
+				if c then
+					out[#out + 1] = chars:sub(bit.band(c, 63) + 1, bit.band(c, 63) + 1)
+				else
+					out[#out + 1] = "="
+				end
+				i = i + 3
+			end
+
+			return table.concat(out)
+		]end
+	end
+end
+
+// Take an url or an `os.Path` object. *(workaround to get the path relative to the user document)*
+// In case of an `os.Path` object, image will be saved inside the final document.
+// `mode` can be `block` (default), `inline`, `float-left` or `float-right`
+// Support svg, png, jpg, avif, webp and bmp images format.
+image: macro(path, width:, height:, caption:, mode: block)
+	let src
+
+	if not Table.find(("block", "inline", "float-left", "float-right"), mode)
+		raise Unknown mode "$mode"
+	end
+
+	if type(path) == "string"
+		if path.startsWith("https://")
+			set src = $path
+		else
+			raise Given `path` must be an url or an `os.Path` object, not a `string`.
+		end
+	else
+		if not path.exists()
+			raise Image "$path" not found.
+		end
+
+		let ext = $path.getExtension().lower()
+		let MIME = if Table.find(("png", "gif", "jpeg", "avif", "bmp", "webp"), ext)
+			image/$ext
+		elseif ext == "jpg" 
+			image/jpeg
+		elseif ext == "svg" 
+			image/svg+xml
+		else
+			raise Unsupported extention "$ext".
+		end
+		
+		set src = data\:$MIME;base64,$base64($path)
+	end
+	
+	
+	return @html.Tag(Figure)
+		class: do
+			pages--image--wrapper
+			\spages--image--$mode
+			if mode != "block"
+				\spages--as-inline
+			end
+		end
+		- do
+			@html.Img
+				class: pages--image
+				src: $src
+				if width
+					width: $width
+				end
+				if height
+					height: $height
+				end
+
+				if not width and not height
+					style: if mode == "inline"
+						(height: 1em)
+					elseif mode == "block"
+						(maxWidth: 100%, height: auto)
+					else
+						(width: auto)
+					end
+				end
+			end
+			if caption
+				@html.Tag(Figcaption, class: pages--image--figcaption)
+					$caption
+				end
+			end
+		end
+	end
+end

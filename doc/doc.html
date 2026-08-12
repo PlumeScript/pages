@@ -504,6 +504,18 @@ Licensed under the MIT License — see LICENSE for details.
 */
 
 @media print {
+	@page {
+		size: var(--page-width) var(--page-height);
+		margin: 0;
+	}
+
+	.pages--page {
+		break-after: page;
+	}
+
+	.pages--page:last-child {
+		break-after: auto;
+	}
 }
 
 /*

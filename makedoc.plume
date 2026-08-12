@@ -73,6 +73,8 @@ end
 			The default per level is set by the contextual variables $code(formatNumbering1) to $code(formatNumbering6).
 
 	$chapter(List of components)
+        $section(Document)
+          $bold(Usage)\: $code(Document $plume.doc($Document).signature)$par
 		for component in os.Path("./components").walk()
 			$ section(capitalize(component.getStem()))
 			for name, elem in items(component.import())

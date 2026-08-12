@@ -8,7 +8,12 @@ Licensed under the MIT License — see LICENSE for details.
 // Workaround: os.Path.write doesn't support binary mode, and Plume is missing bytes manipulation features
 macro(path)
 	let strpath = $ String(path)
-	return @lua.eval
+	let cachePath = $os.Path(static/.cache/$strpath.replace(-, --).replace([/\\:], -, ?rich))
+	
+	if cachePath.exists() and cachePath.getModification() > path.getModification()
+		return $cachePath.read()
+	end
+	let b64 = @lua.eval
 		local path = "$strpath"
 		raw[
 			local f = io.open(path, "rb")
@@ -45,4 +50,7 @@ macro(path)
 			return table.concat(out)
 		]end
 	end
+
+	run $ cachePath.write(b64)
+	return $b64
 end

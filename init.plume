@@ -34,7 +34,7 @@ end
 
 pagesContext: $context
 
-Document: macro(content, filename:, pageFormat: A4, ?paginated, ?landscape)
+Document: macro(content, filename:, pageFormat: A4, lang:, ?paginated, ?landscape)
 	if filename
 		if not filename.find("%.html^", ?rich)
 			set filename = $filename\0.html
@@ -42,36 +42,38 @@ Document: macro(content, filename:, pageFormat: A4, ?paginated, ?landscape)
 	end
 
 	let result = do
-		@html.Head
-			@html.Style
-				@Rule(:root)
-					...initPageFormat($pageFormat, landscape: $landscape)
+		@html.Tag(HTML, lang: $(lang or plume.locale() or "en"))
+			@html.Head
+				@html.Style
+					@Rule(:root)
+						...initPageFormat($pageFormat, landscape: $landscape)
 
-					$var(pageMarginTop):    30mm
-					$var(pageMarginBottom): 30mm
-					$var(pageMarginLeft):   30mm
-					$var(pageMarginRight):  30mm
-					$var(pageMarginGutter): 0
-				end
-				
-				for stylesheet in os.Path("./css").walk()
-					if stylesheet.isFile()
-						$cleanImported($stylesheet.read())
+						$var(pageMarginTop):    30mm
+						$var(pageMarginBottom): 30mm
+						$var(pageMarginLeft):   30mm
+						$var(pageMarginRight):  30mm
+						$var(pageMarginGutter): 0
+					end
+					
+					for stylesheet in os.Path("./css").walk()
+						if stylesheet.isFile()
+							$cleanImported($stylesheet.read())
+						end
 					end
 				end
+
+				$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js, ?defer)
 			end
 
-			$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js, ?defer)
-		end
+			@html.Body
+				$content
+			end
 
-		@html.Body
-			$content
-		end
-
-		@html.Script
-			for script in os.Path("./js").walk()
-				if script.isFile()
-					$cleanImported($script.read())
+			@html.Script
+				for script in os.Path("./js").walk()
+					if script.isFile()
+						$cleanImported($script.read())
+					end
 				end
 			end
 		end

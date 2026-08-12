@@ -89,15 +89,13 @@ let version = v0.4.0
 				$subsection($italic($type($elem)) $name, ?hideNumbering)
 				if type(elem) == "macro"
 					let infos = $ plume.doc(elem)
-					@Par
-						$bold(Usage)\: $code($name $infos.signature)$newpar
-						if len(infos.doc) > 0
-                            $glue
-							@Blockquote
-								for line in infos.doc.lines()
-									$ formatLine(line)
-									$newpar
-								end
+					$bold(Usage)\: $code($name $infos.signature)$newpar
+					if len(infos.doc) > 0
+                          $glue
+						@Blockquote
+							for line in infos.doc.lines()
+								$ formatLine(line)
+								$newpar
 							end
 						end
 					end

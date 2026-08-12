@@ -11,8 +11,8 @@ Licensed under the MIT License — see LICENSE for details.
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: var(--space-2x);
-  padding: var(--space-6x) var(--space-4x);
+  gap: var(--space-1x);
+  padding: var(--space-4x) var(--space-4x);
 }
 
 .pages--main-title--title {
@@ -20,7 +20,7 @@ Licensed under the MIT License — see LICENSE for details.
   font-size: var(--text-4xl);
   font-weight: var(--font-weight-bold);
   line-height: var(--leading-tight);
-  margin-bottom: var(--space-2x);
+  margin-bottom: var(--space-1x);
 }
 
 .pages--main-title--subtitle {
@@ -28,14 +28,14 @@ Licensed under the MIT License — see LICENSE for details.
   font-size: var(--text-xl);
   font-weight: var(--font-weight-medium);
   line-height: var(--leading-normal);
-  margin-bottom: var(--space-4x);
+  margin-bottom: var(--space-2x);
 }
 
 .pages--main-title--author {
   font-family: var(--font-body);
   font-size: var(--text-lg);
   font-weight: var(--font-weight-bold);
-  margin-bottom: var(--space-3x);
+  margin-bottom: var(--space-1x);
 }
 
 .pages--main-title--author-date-wrapper {

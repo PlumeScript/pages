@@ -1,11 +1,20 @@
-use #future(all)
-let html    = $import(html)
-let context = $import(context)
+/*
+This file is part of Pages - A Plume🪶 document generator
 
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+let html    = $import(html)
+let context = $import(../context)
+
+// Rendering a math formula
+// `processor` could be `tex` *(for `LaTeX` syntax)* or `ascii` *(for `asciimath` syntax)*. If empty, use contextual variable `formulaProcessor`.
+// `?display` renders it as a block.
 formula: macro(content, processor:, ?display)
 	set processor = $ processor or context.formulaProcessor()
 	if processor != "tex" and processor != "ascii"
 		raise Unsuported processor `$processor`.
 	end
-	$html.Script($content, type: math/$processor$(display and " ;mode=display"))
+	$html.Script($content, type: math/$processor$(display and " ;mode=display"), class: pages--as-inline)
 end

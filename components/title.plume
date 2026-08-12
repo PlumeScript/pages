@@ -5,13 +5,13 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-use #future(all)
 let html = $import(html)
-let context = $import(context)
-let applyFormatNumbering from $import(./utils/counterLabel)
+let context = $import(../context)
+let applyFormatNumbering from $import(../utils/counterLabel)
 
 let numberTracking = (0, 0, 0, 0, 0, 0)
 
+// Set the numbering counter of a heading level.
 headingSetCounter: macro(level, Number value)
 	if value<=0
 		raise value must be greater than 0
@@ -22,7 +22,15 @@ headingSetCounter: macro(level, Number value)
 	set numberTracking[level] = $value
 end
 
-ref heading: macro(String title, Number level: 1, formatNumbering:, ?hideNumbering, ?noNumbering)
+// Section heading, auto-numbered.
+// `marker:` see **Numbering Format**.
+// `?hideNumbering` hides the number, `?noNumbering` disables counting.
+ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNumbering)
+	let formatNumbering
+	if marker != "auto"
+		set formatNumbering = $marker
+	end
+
 	if level<1 or level>6
 		raise Level must be between 1 and 6, not $level.
 	end
@@ -52,10 +60,26 @@ ref heading: macro(String title, Number level: 1, formatNumbering:, ?hideNumberi
 	$html[key]($title)
 end
 
-for level in seq(6)
-	let key = H$level
-	key: macro(args)
-		set args.level = $level
-		$heading(...args)
-	end
+// alias for `heading(..., level: 1)`
+chapter: macro(...args)
+	set args.level = 1
+	$heading(...args)
+end
+
+// alias for `heading(..., level: 2)`
+section: macro(...args)
+	set args.level = 2
+	$heading(...args)
+end
+
+// alias for `heading(..., level: 3)`
+subsection: macro(...args)
+	set args.level = 3
+	$heading(...args)
+end
+
+// alias for `heading(..., level: 4)`
+subsubsection: macro(...args)
+	set args.level = 4
+	$heading(...args)
 end

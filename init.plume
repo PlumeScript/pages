@@ -1,5 +1,5 @@
 /*
-Pages 0.2 - A Plume🪶 document generator
+Pages 0.3.0 - A Plume🪶 document generator
 
 Copyright © 2026-2026 Erwan Barbedor
 
@@ -22,58 +22,75 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use #future(all)
 let html = $import(html)
 let var, Rule from $import(css)
-let initPageFormat = $import(initPageFormat)
-let context = $import(context)
+let initPageFormat = $import(./initPageFormat)
+let context = $import(./context)
+let cleanImported = $import(./utils/cleanImported)
+let global = $import(./global)
 
-for component in os.Path("components").walk()
+for component in os.Path("./components").walk()
 	...import($String($component).replace(.plume, $("")))
 end
 
 pagesContext: $context
 
-Document: macro(filename, content, pageFormat: A4, ?paginated, ?landscape)
-	if not filename.find("%.html^", ?rich)
-		set filename = $filename\.html
+Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?landscape)
+	if filename
+		if not filename.find("%.html^", ?rich)
+			set filename = $filename\0.html
+		end
 	end
 
-	let outputPath = $ os.Path(filename)
-
-	@outputPath.write
-		@html.Head
-			@html.Style
-				@Rule(:root)
-					...initPageFormat($pageFormat, landscape: $landscape)
-
-					$var(pageMarginTop):    20mm
-					$var(pageMarginBottom): 20mm
-					$var(pageMarginLeft):   20mm
-					$var(pageMarginRight):  20mm
-					$var(pageMarginGutter): 0
+	let result = do
+		@html.Tag(HTML, lang: $(lang or plume.locale() or "en"))
+			@html.Head
+				$html.Tag(meta,, charset: UTF-8, ?noClose)
+				if global.documentAuthor
+					$html.Tag(meta,, name: author, content: $global.documentAuthor, ?noClose)
 				end
-				
-				for stylesheet in os.Path("css").walk()
-					if stylesheet.isFile()
-						$stylesheet.read()
+				set title = $ title or global.documentTitle or filename
+				if title
+					$html.Tag(title, $title)
+				end
+				@html.Style
+					@Rule(:root)
+						...initPageFormat($pageFormat, landscape: $landscape)
+
+						$var(pageMarginTop):    30mm
+						$var(pageMarginBottom): 30mm
+						$var(pageMarginLeft):   30mm
+						$var(pageMarginRight):  30mm
+						$var(pageMarginGutter): 0
+					end
+					
+					for stylesheet in os.Path("./css").walk()
+						if stylesheet.isFile()
+							$cleanImported($stylesheet.read())
+						end
+					end
+				end
+
+				$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js, ?defer)
+			end
+
+			@html.Body
+				$content
+			end
+
+			@html.Script
+				for script in os.Path("./js").walk()
+					if script.isFile()
+						$cleanImported($script.read())
 					end
 				end
 			end
-
-			$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js, ?defer)
-		end
-
-		@html.Body
-			$content
-		end
-
-		@html.Script
-			for script in os.Path("js").walk()
-				if script.isFile()
-					$script.read()
-				end
-			end
 		end
 	end
+
+	if filename
+		run $ os.Path(filename).write(result)
+	end
+	
+	return $result
 end

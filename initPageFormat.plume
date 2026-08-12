@@ -27,6 +27,6 @@ macro(String pageFormat, ?landscape)
 		set w, h = ($h, $w)
 	end
 
-	$var(pageWidth):  $w\mm
-	$var(pageHeight): $h\mm
+	$var(pageWidth):  $w\0mm
+	$var(pageHeight): $h\0mm
 end

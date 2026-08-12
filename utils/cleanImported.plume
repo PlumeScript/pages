@@ -1,0 +1,5 @@
+use #future(all)
+
+macro (txt)
+	return $txt
+end

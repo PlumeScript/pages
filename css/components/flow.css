@@ -5,9 +5,22 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-.pages--flow--hline {}
+.pages--flow--hline {
+	margin: var(--space-1x) 0;
+}
 .pages--flow--newline {}
-.pages--flow--newpage {}
 .pages--flow--vspace {
 	flex-grow: 1;
+	flex-basis: 0;
+	max-height: var(--vspace-max);
+}
+
+.pages--flow--vfill {
+	flex-grow: 1;
+	flex-basis: 0;
+}
+
+.pages--flow--glue {
+	break-before: avoid;
+	break-after: avoid;
 }

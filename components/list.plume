@@ -5,28 +5,79 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-use #future(all)
 let html = $import(html)
 let css  = $import(css)
 
-List: macro( bullet: •, Number indent: 4, Number columns: 1, ...items)
+let context = $import(../context)
+let applyFormatNumbering from $import(../utils/counterLabel)
+
+let numberTracking = (0, 0, 0, 0, 0, 0)
+let listDeep = 0
+
+// Bulleted or numbered list.
+// To choose the bullet, set `marker` to `bullet`, `star`, `arrow`, `dash`, `cross`, `check` or a custom one.
+// To make an ordered List, set `marker` to `auto` or use **Numbering Format**.
+// If `marker` value is interpreted but shouldn't be, use `rawmarker` instead.
+// `indent` sets the left padding.
+ref List: macro(Number indent: 4, Number columns: 1, marker:, rawmarker:,...items)
+	let bullet, formatNumbering, ordered
+
+	if marker == "bullet"
+		set bullet = •
+	elseif marker == "star"
+		set bullet = ★
+	elseif marker == "arrow"
+		set bullet = →
+	elseif marker == "dash"
+		set bullet = –
+	elseif marker == "cross"
+		set bullet = ✗
+	elseif marker == "check"
+		set bullet = ✓ 
+	elseif marker == "auto"
+		set ordered = $true
+	elseif marker.find("[aAiI1*]", ?rich)
+		set ordered = $true
+		set formatNumbering = $marker
+	else
+		set bullet = $(rawmarker or marker)
+	end
+
 	let style = @css.css
 		gridTemplateColumns: repeat($columns, 1fr)
 		paddingLeft: calc($indent * var(--space-1x))
 	end
-	
-	@html.Div(class: pages--list, style: $style)
-		for item in items
-			@html.Div(class: pages--list--item)
-				if bullet
-					@html.Span(class: pages--list--item--bullet)
-						$bullet
+
+	meta fragment: macro()
+		if ordered
+			set listDeep += 1
+		end
+
+		@html.Div(class: pages--list pages--to-flow, style: $style)
+			for item in items
+				@html.Div(class: pages--list--item pages--to-flow)
+					if ordered
+						@html.Span(class: pages--list--item--bullet)
+							set numberTracking[listDeep] += 1
+							$ applyFormatNumbering(listDeep, formatNumbering, numberTracking)
+						end
+					elseif bullet
+						@html.Span(class: pages--list--item--bullet)
+							$bullet
+						end
+					end
+					@html.Span(class: pages--list--item--body pages--to-flow)
+						$item
 					end
 				end
-				@html.Span(class: pages--list--item--body)
-					$item
-				end
 			end
+		end
+
+		if ordered
+			for i in seq(listDeep, len(numberTracking))
+				set numberTracking[i] = 0
+			end
+			set listDeep -= 1
 		end
 	end
 end

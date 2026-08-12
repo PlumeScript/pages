@@ -4,3 +4,30 @@ This file is part of Pages - A Plume🪶 document generator
 Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
+
+.pages--table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  margin-top: var(--space-1x);
+  margin-bottom: var(--space-1x);
+  
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+.pages--table--cell {
+  padding: var(--space-1x) var(--space-2x);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pages--table--row-header .pages--table--cell-header {
+  font-weight: var(--font-weight-bold);
+  border-bottom: 2px solid #1a1a1a;
+}
+
+.pages--table--zebra .pages--table--row:not(.pages--table--row-header):nth-child(even) {
+  background-color: var(--zebra-color);
+}

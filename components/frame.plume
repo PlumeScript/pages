@@ -5,11 +5,10 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-use #future(all)
 let html = $import(html)
 
 Blockquote: macro(content, author:, title:)
-	@html.Div(class: pages--frame--blockquote)
+	@html.Div(class: pages--frame--blockquote pages--to-flow)
 		if title
 			$html.Div($title, class: pages--frame--blockquote--title)
 		end
@@ -17,5 +16,17 @@ Blockquote: macro(content, author:, title:)
 		if author
 			$html.Div($author, class: pages--frame--blockquote--author)
 		end
+	end
+end
+
+code: macro(content)
+	@html.Tag(Code, class: pages--frame--code)
+		$content
+	end
+end
+
+BlockCode: macro(content)
+	@html.Pre(class: pages--frame--blockcode)
+		$content
 	end
 end

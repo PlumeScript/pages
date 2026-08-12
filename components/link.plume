@@ -5,7 +5,8 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-.page--title-number {
-	margin-right: var(--space-1x);
-	font-variant-numeric: tabular-nums;
-}
+let html = $import(html)
+
+link: macro(text, target)
+	$html.A($text, href: $target, class: pages--link)
+end

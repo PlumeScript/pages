@@ -47,10 +47,10 @@ ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNu
 
 	if not hideNumbering and not noNumbering
 		set title = do
-			@html.Span(class: page--title-number)
+			@html.Span(class: pages--title-number)
 				$applyFormatNumbering($level, $formatNumbering, $numberTracking)
 			end
-			@html.Span(class: page--title-body)
+			@html.Span(class: pages--title-body)
 				$title
 			end
 		end

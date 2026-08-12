@@ -64,7 +64,7 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?
 						$var(pageMarginGutter): 0
 					end
 					
-					for stylesheet in os.Path("./css").walk()
+					for stylesheet in os.Path("./static/css").walk()
 						if stylesheet.isFile()
 							$cleanImported($stylesheet.read())
 						end
@@ -79,7 +79,7 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?
 			end
 
 			@html.Script
-				for script in os.Path("./js").walk()
+				for script in os.Path("./static/js").walk()
 					if script.isFile()
 						$cleanImported($script.read())
 					end

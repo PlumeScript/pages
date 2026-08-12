@@ -19,7 +19,7 @@ macro formatLine(line)
 	return $line
 end
 
-@Document(filename: ./doc/doc)
+@Document(filename: ./doc/doc, title: Plume Pages Documentation)
 	$vfill
     @MainTitle
 		title: $image($os.Path(./logo.svg)) Documentation

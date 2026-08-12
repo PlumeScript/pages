@@ -27,6 +27,7 @@ let var, Rule from $import(css)
 let initPageFormat = $import(./initPageFormat)
 let context = $import(./context)
 let cleanImported = $import(./utils/cleanImported)
+let global = $import(./global)
 
 for component in os.Path("./components").walk()
 	...import($String($component).replace(.plume, $("")))
@@ -34,7 +35,7 @@ end
 
 pagesContext: $context
 
-Document: macro(content, filename:, pageFormat: A4, lang:, ?paginated, ?landscape)
+Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?landscape)
 	if filename
 		if not filename.find("%.html^", ?rich)
 			set filename = $filename\0.html
@@ -44,6 +45,14 @@ Document: macro(content, filename:, pageFormat: A4, lang:, ?paginated, ?landscap
 	let result = do
 		@html.Tag(HTML, lang: $(lang or plume.locale() or "en"))
 			@html.Head
+				$html.Tag(meta,, charset: UTF-8, ?noClose)
+				if global.documentAuthor
+					$html.Tag(meta,, name: author, content: $global.documentAuthor, ?noClose)
+				end
+				set title = $ title or global.documentTitle or filename
+				if title
+					$html.Tag(title, $title)
+				end
 				@html.Style
 					@Rule(:root)
 						...initPageFormat($pageFormat, landscape: $landscape)

@@ -5,7 +5,8 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-let html = $import(html)
+let html   = $import(html)
+let global = $import(../global)
 
 // Intended to be on first page or used as cover
 // By default, put title - subtitle - author one below the other, and date/institution on one line and smaller.
@@ -30,4 +31,7 @@ MainTitle: macro(title:, subtitle:, author:, date:, institution:)
 			end
 		end
 	end
+
+	set global.documentTitle  = $(title.replace("<[^>]+>",,?rich).trim() or global.documentTitle)
+	set global.documentAuthor = $(author or global.documentAuthor)
 end

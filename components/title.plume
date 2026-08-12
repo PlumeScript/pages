@@ -64,10 +64,26 @@ ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNu
 	end
 end
 
-for level in seq(6)
-	let key = H$level
-	key: macro(args)
-		set args.level = $level
-		$heading(...args)
-	end
+// alias for `heading(..., level: 1)`
+chapter: macro(...args)
+	set args.level = 1
+	$heading(...args)
+end
+
+// alias for `heading(..., level: 2)`
+section: macro(...args)
+	set args.level = 2
+	$heading(...args)
+end
+
+// alias for `heading(..., level: 3)`
+subsection: macro(...args)
+	set args.level = 3
+	$heading(...args)
+end
+
+// alias for `heading(..., level: 4)`
+subsubsection: macro(...args)
+	set args.level = 4
+	$heading(...args)
 end

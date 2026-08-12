@@ -36,7 +36,7 @@ Licensed under the MIT License — see LICENSE for details.
 	--font-mono: "Consolas", "Courier New", monospace;
 	--radius-sm: 0.25rem;
 
-	--max-width: 65ch;
+	--max-width: 50ch;
 }
 
 *, *::before, *::after {
@@ -50,7 +50,7 @@ ul, ol {
 }
 
 html {
-  font-size: 12pt;
+  font-size: 14pt;
   line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
 }
@@ -64,7 +64,6 @@ body {
 h1, h2, h3, h4, h5 {
 	font-family: var(--font-title);
 	break-after: avoid;
-	text-wrap: balance;
 }
 
 h1 {
@@ -95,16 +94,11 @@ h4 {
 p {
 	margin: 0;
 
-	max-width: var(--max-width);
+  max-width: var(--max-width);
   text-align: justify;
-  hyphens: auto;
   text-wrap: pretty;
 
   &:not(:last-child) {
   	margin-bottom: var(--space-1x);
-  }
-
-  & mjx-container {
-  	hyphens: none;
   }
 }

@@ -5,7 +5,6 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-use #future(all)
 let html = $import(html)
 
 hline: $html.Hr(class: pages--flow--hline pages--to-space)

@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use #future(all)
 let html = $import(html)
 let var, Rule from $import(css)
 let initPageFormat = $import(./initPageFormat)

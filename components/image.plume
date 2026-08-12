@@ -5,7 +5,6 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
-use #future(all)
 let html = $import(html)
 
 // Workaround: os.Path.write doesn't support binary mode, and Plume is missing bytes manipulation features

@@ -17,3 +17,19 @@ Licensed under the MIT License — see LICENSE for details.
 	display: flex;
 	flex-direction: column;
 }
+
+.pages--header,
+.pages--footer {
+	flex: 0 0 auto;
+	display: flex;
+	justify-content: space-between;
+}
+
+.pages--content {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+
+	display: flex;
+	flex-direction: column;
+}

@@ -1,0 +1,60 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+
+/*
+Exemple:
+
+$Footer((center: wing), ?excludeFirst)
+
+Donne
+
+<div class="--pages-to-insert" zone="footer" position="center" exclude-first>wing</div>
+*/
+
+let html = $import(html)
+
+macro make(content, zone, position, ?excludeFirst, ?excludeLast)
+	@html.Div
+		class: pages--to-insert
+		zone: $zone
+		position: $position
+		if excludeFirst
+			excludeFirst: $true
+		end
+		if excludeLast
+			excludeLast: $true
+		end
+		- $content	
+	end
+end
+
+// Content will be cloned into all page. You can exclude first and last one with flags.
+Header: macro(left:, center:, right:, ?excludeFirst, ?excludeLast)
+	if left
+		$make($left,   header, left,   excludeFirst: $excludeFirst, excludeLast: $excludeLast)
+	end
+	if center
+		$make($center, header, center, excludeFirst: $excludeFirst, excludeLast: $excludeLast)
+	end
+	if right
+		$make($right,  header, right,  excludeFirst: $excludeFirst, excludeLast: $excludeLast)
+	end
+end
+
+// Content will be cloned into all page. You can exclude first and last one with flags.
+Footer: macro(left:, center:, right:, ?excludeFirst, ?excludeLast)
+	if left
+		$make($left,   footer, left,   excludeFirst: $excludeFirst, excludeLast: $excludeLast)
+	end
+	if center
+		$make($center, footer, center, excludeFirst: $excludeFirst, excludeLast: $excludeLast)
+	end
+	if right
+		$make($right,  footer, right,  excludeFirst: $excludeFirst, excludeLast: $excludeLast)
+	end
+end

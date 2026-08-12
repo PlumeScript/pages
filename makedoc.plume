@@ -19,14 +19,24 @@ macro formatLine(line)
 	return $line
 end
 
+let version = v0.4.0
+
 @Document(filename: ./doc/doc, title: Plume Pages Documentation)
 	$vfill
     @MainTitle
 		title: $image($os.Path(./logo.svg)) Documentation
-		subtitle: v0.3.0
+		subtitle: $version
 	end
-
     $vfill
+
+    @Header(?excludeFirst)
+      left: Plume Pages Documentation
+    end
+    
+    @Footer(?excludeFirst)
+      center: $version
+    end
+    
     $newpage
 	$chapter(Global mechanisms)
 		$section(Paginations)

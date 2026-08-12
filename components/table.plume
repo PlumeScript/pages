@@ -12,7 +12,7 @@ let html = $import(html)
 // `?zebra` alternates row colors.
 // **Example:** ```@Table\n    header: (id, name, price)\n    - (1, Apple, 2€)\n    - (2, Orange, 3€)\nend```
 Table: macro(?zebra, ...rows)
-	@html.Table(class: pages--table pages--to-space $(zebra and "pages--table--zebra"))
+	@html.Table(class: pages--table $(zebra and "pages--table--zebra"))
 		if rows.header?
 			if type(rows.header) != "table"
 				raise Header must be a table.

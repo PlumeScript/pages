@@ -5,21 +5,6 @@ They are distinct from the styling classes (`pages--text--bold`, `pages--list`, 
 they carry no visual style of their own — they tell the pagination/paragraphing
 engine how to treat the element.
 
-## `.pages--to-space`
-
-> Marker: "this block should be preceded by flexible spacing."
-
-The `addSpacing` pass inserts a `<div class="pages--flow--vspace">` right before
-every `.pages--to-space` element, and one as the last element of every page.
-`.pages--flow--vspace` is a flexible spacer (`flex-grow: 1`, `max-height:
-var(--vspace-max)`) that absorbs the leftover vertical space of the page.
-
-**Where it is set:** on block components that should be followed by spacing —
-`heading` (h1–h6), `hline`, `Blockquote`, `MainTitle`.
-
-**How to use it:** put it on a block component whose trailing page space should
-be absorbed. Do not put it on inline content.
-
 ## `.pages--to-flow`
 
 > Marker: "this element's content is flow content to be auto-paragraphed."

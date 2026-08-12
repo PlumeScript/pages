@@ -8,7 +8,7 @@ Licensed under the MIT License — see LICENSE for details.
 let html = $import(html)
 
 Blockquote: macro(content, author:, title:)
-	@html.Div(class: pages--frame--blockquote pages--to-space pages--to-flow)
+	@html.Div(class: pages--frame--blockquote pages--to-flow)
 		if title
 			$html.Div($title, class: pages--frame--blockquote--title)
 		end

@@ -185,31 +185,12 @@ function autoParagraph(container) {
   container.replaceChildren(fragment);
 }
 
-// Second pass, after pagination: insert a bounded vspace before each
-// .pages--to-space element and as the last element of every page, so the
-// leftover vertical space is absorbed (up to --vspace-max).
-function addSpacing() {
-  const makeVspace = () => {
-    const el = document.createElement('div');
-    el.className = 'pages--flow--vspace';
-    return el;
-  };
-
-  document.querySelectorAll('.pages--page').forEach(page => {
-    page.querySelectorAll('.pages--to-space').forEach(el => {
-      el.insertAdjacentElement('beforebegin', makeVspace());
-    });
-    page.appendChild(makeVspace());
-  });
-}
-
 document.addEventListener('DOMContentLoaded', function () {
   // Paragraphs are built before MathJax typesets, so a formula script (with
   // .pages--as-inline) is wrapped in its <p> before MathJax replaces it.
   autoParagraph(document.body);
   const finish = () => {
     makePages();
-    addSpacing();
     window.__pagesReadyResolve();
   };
   if (window.MathJax && window.MathJax.startup && hasMath) {

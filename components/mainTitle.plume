@@ -12,7 +12,7 @@ let global = $import(../global)
 // By default, put title - subtitle - author one below the other, and date/institution on one line and smaller.
 // All fields are optionnals.
 MainTitle: macro(title:, subtitle:, author:, date:, institution:)
-	@html.Div(class: pages--main-title pages--to-space)
+	@html.Div(class: pages--main-title)
 		$html.H1($title, class: pages--main-title--title)
 		if subtitle
 			$html.H2($subtitle, class: pages--main-title--subtitle)

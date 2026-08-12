@@ -61,8 +61,9 @@ end
 
 		$section(Numbering Format)
 			Headings and ordered lists number automatically from per-level counters.
-			$par
+			$glue
 			The format is a string over a few tokens\:
+            $par
 			@List(marker: arrow)
 				- $code(1) decimal, $code(a) and $code(A) lowercase and uppercase letters, $code(i) and $code(I) roman numerals
 				- $code(*) renders the parent level (forbidden at level 1)
@@ -84,6 +85,7 @@ end
 					@Par
 						$bold(Usage)\: $code($name $infos.signature)$par
 						if len(infos.doc) > 0
+                            $glue
 							@Blockquote
 								for line in infos.doc.lines()
 									$ formatLine(line)

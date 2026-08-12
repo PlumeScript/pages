@@ -7,12 +7,10 @@ Licensed under the MIT License — see LICENSE for details.
 
 let html = $import(html)
 
-hline: $html.Hr(class: pages--flow--hline pages--to-space)
+hline: $html.Hr(class: pages--flow--hline)
 newline: $html.Br()
 par: $html.Div($empty, class: pages--flow--par)
 newpage: $html.Div($empty, style:(breakBefore: page))
 
-hspace: $html.Span($empty, class: pages--flow--hspace)
-vspace: $html.Div($empty, class: pages--flow--vspace)
 vfill: $html.Div($empty, class: pages--flow--vfill)
 glue: $html.Div($empty, class: pages--flow--glue)

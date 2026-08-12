@@ -51,6 +51,9 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?
 	if (context.titleFont() == "Lora" or context.bodyFont() == "Lora")
 		run $Table.append($global.fontsToLoad, $os.Path(./static/fonts/Lora))
 	end
+	if (context.monoFont() == "FiraCode")
+		run $Table.append($global.fontsToLoad, $os.Path(./static/fonts/FiraCode))
+	end
 
 	let result = do
 		@html.Tag(HTML, lang: $(lang or plume.locale() or "en"))

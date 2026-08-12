@@ -16,3 +16,4 @@ formulaProcessor: $Context(tex)
 
 titleFont: $Context(Lora)
 bodyFont: $Context(Lora)
+monoFont: $Context(FiraCode)

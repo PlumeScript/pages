@@ -47,10 +47,10 @@ Document: macro(content, filename:, pageFormat: A4, ?paginated, ?landscape)
 				@Rule(:root)
 					...initPageFormat($pageFormat, landscape: $landscape)
 
-					$var(pageMarginTop):    20mm
-					$var(pageMarginBottom): 20mm
-					$var(pageMarginLeft):   20mm
-					$var(pageMarginRight):  20mm
+					$var(pageMarginTop):    30mm
+					$var(pageMarginBottom): 30mm
+					$var(pageMarginLeft):   30mm
+					$var(pageMarginRight):  30mm
 					$var(pageMarginGutter): 0
 				end
 				

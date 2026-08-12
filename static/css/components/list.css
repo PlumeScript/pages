@@ -20,6 +20,9 @@ Licensed under the MIT License — see LICENSE for details.
 .pages--list--item--bullet {
   flex-shrink: 0;
   font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  font-size: 80%;
+  color: var(--muted);
 }
 
 .pages--list--item--body {

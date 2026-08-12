@@ -25,6 +25,7 @@ Licensed under the MIT License — see LICENSE for details.
 	--highlight-background: #f5f5f5;
 	--border-strong: #555;
 	--muted: #666;
+	--text: #000;
 }/*
 This file is part of Pages - A Plume🪶 document generator
 
@@ -426,7 +427,17 @@ Licensed under the MIT License — see LICENSE for details.
 
 .page--title-number {
 	margin-right: var(--space-1x);
-	font-variant-numeric: tabular-nums;
+	font-size: 80%;
+	color: var(--muted);
+
+	.pages--toc & {
+		font-variant-numeric: tabular-nums;
+	} 
+}
+
+h1 .page--title-number {
+	font-size: 100%;
+	color: var(--text);
 }/*
 This file is part of Pages - A Plume🪶 document generator
 

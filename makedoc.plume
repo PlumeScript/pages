@@ -111,7 +111,7 @@ let version = v0.4.0
 		@Table
 			header: (Name, Default value)
 			for name, value in items(import("context"))
-				- (pagesContext.$name, $value())
+				- ($code(pagesContext.$name), $code($value()))
 			end
 		end
 end

@@ -35,6 +35,8 @@ Licensed under the MIT License — see LICENSE for details.
 
 	--font-mono: "Consolas", "Courier New", monospace;
 	--radius-sm: 0.25rem;
+
+	--max-width: 50ch;
 }
 
 *, *::before, *::after {
@@ -92,7 +94,7 @@ h4 {
 p {
 	margin: 0;
 
-  max-width: 65ch;
+  max-width: var(--max-width);
   text-align: justify;
   text-wrap: pretty;
 

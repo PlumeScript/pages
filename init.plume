@@ -27,6 +27,7 @@ let var, Rule from $import(css)
 let initPageFormat = $import(./initPageFormat)
 let context = $import(./context)
 let cleanImported = $import(./utils/cleanImported)
+let loadFont = $import(./utils/loadFont)
 let global = $import(./global)
 
 for component in os.Path("./components").walk()
@@ -35,11 +36,20 @@ end
 
 pagesContext: $context
 
+// `path` must be an `os.Path` object targeting a directory.
+loadFont: macro(path)
+	$ Table.append(global.fontsToLoad, path)
+end
+
 Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?landscape)
 	if filename
 		if not filename.find("%.html^", ?rich)
 			set filename = $filename\0.html
 		end
+	end
+
+	if (context.titleFont() == "Lora" or context.bodyFont() == "Lora")
+		run $Table.append($global.fontsToLoad, $os.Path(./static/fonts/Lora))
 	end
 
 	let result = do
@@ -54,6 +64,9 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?
 					$html.Tag(title, $title)
 				end
 				@html.Style
+					for path in global.fontsToLoad
+						$ loadFont(path)
+					end
 					@Rule(:root)
 						...initPageFormat($pageFormat, landscape: $landscape)
 

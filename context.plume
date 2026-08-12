@@ -13,3 +13,6 @@ formatNumbering5: $Context(*.1)
 formatNumbering6: $Context(*.1)
 
 formulaProcessor: $Context(tex)
+
+titleFont: $Context(Lora)
+bodyFont: $Context(Lora)

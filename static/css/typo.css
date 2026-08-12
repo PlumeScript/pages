@@ -6,8 +6,8 @@ Licensed under the MIT License — see LICENSE for details.
 */
 
 :root {
-	--font-title: "Arial";
-	--font-body: "Lato Regular";
+	--font-title: "Lora";
+	--font-body: "Lora";
 	--text-xs:   0.75rem;
 	--text-sm:   0.875rem;
 	--text-base: 1rem;
@@ -98,6 +98,7 @@ h4 {
 
 p {
 	margin: 0;
+	font-weight: 500;
 
   max-width: var(--max-width);
   text-align: justify;

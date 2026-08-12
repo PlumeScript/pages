@@ -75,7 +75,15 @@ end
 
 	$chapter(List of components)
         $section(Document)
-          $bold(Usage)\: $code(Document $plume.doc($Document).signature)$par
+          	$bold(Usage)\: $code(Document $plume.doc($Document).signature)$par
+        $section(LoadFont)
+          	$bold(Usage)\: $code(loadFont $plume.doc($loadFont).signature)$par
+          	@Blockquote
+				for line in plume.doc(loadFont).doc.lines()
+					$ formatLine(line)
+					$par
+				end
+			end
 		for component in os.Path("./components").walk()
 			$ section(capitalize(component.getStem()))
 			for name, elem in items(component.import())

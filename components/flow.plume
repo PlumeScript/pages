@@ -9,7 +9,7 @@ let html = $import(html)
 
 hline: $html.Hr(class: pages--flow--hline)
 newline: $html.Br()
-par: $html.Div($empty, class: pages--flow--par)
+newpar: $html.Div($empty, class: pages--flow--par)
 newpage: $html.Div($empty, style:(breakBefore: page))
 
 vfill: $html.Div($empty, class: pages--flow--vfill)

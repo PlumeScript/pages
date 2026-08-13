@@ -63,11 +63,11 @@ ref List: macro(Number indent: 4, Number columns: 1, marker:, rawmarker:,...item
 						end
 					elseif bullet
 						@html.Span(class: pages--list--item--bullet)
-							$bullet
+							$ plume.materialize(bullet)
 						end
 					end
 					@html.Span(class: pages--list--item--body pages--to-flow)
-						$item
+						$ plume.materialize(item)
 					end
 				end
 			end

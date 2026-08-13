@@ -10,9 +10,10 @@ let html = $import(html)
 hline: $html.Hr(class: pages--flow--hline)
 newline: $html.Br()
 newpar: $html.Div($empty, class: pages--flow--par)
-newpage: $html.Div($empty, style:(breakBefore: page))
+ref newpage: $html.Div($empty, style:(breakBefore: page))
 
 vfill: $html.Div($empty, class: pages--flow--vfill)
 glue: $html.Div($empty, class: pages--flow--glue)
 
 pageNumber: $html.Span(, class:pages--to-eval--pagenumber)
+whitePage: $newpage$html.Div(,)$newpage

@@ -58,15 +58,15 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 	end
 
 	let result = do
-		@html.Tag(HTML, lang: $(lang or plume.locale() or "en"))
+		@html.Html(lang: $(lang or plume.locale() or "en"))
 			@html.Head
-				$html.Tag(meta,, charset: UTF-8, ?noClose)
+				$html.Meta(charset: UTF-8, ?noClose)
 				if global.documentAuthor
-					$html.Tag(meta,, name: author, content: $global.documentAuthor, ?noClose)
+					$html.Meta(name: author, content: $global.documentAuthor, ?noClose)
 				end
 				set title = $ title or global.documentTitle or filename
 				if title
-					$html.Tag(title, $title)
+					$html.Title($title)
 				end
 				@html.Style
 					for path in global.fontsToLoad

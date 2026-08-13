@@ -45,13 +45,11 @@ image: macro(path, width:, height:, caption:, mode: block)
 	end
 	
 	
-	return @html.Tag(Figure)
+	return @html.Figure
 		class: do
-			pages--image--wrapper
-			\spages--image--$mode
-			if mode != "block"
-				\spages--as-inline
-			end
+			- pages--image--wrapper
+			- pages--image--$mode
+			$("pages--as-inline"): $ mode != "block"
 		end
 		- do
 			@html.Img
@@ -75,7 +73,7 @@ image: macro(path, width:, height:, caption:, mode: block)
 				end
 			end
 			if caption
-				@html.Tag(Figcaption, class: pages--image--figcaption)
+				@html.Figcaption(class: pages--image--figcaption)
 					$caption
 				end
 			end

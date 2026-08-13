@@ -39,12 +39,23 @@ function isPaginated(cfg, pageNumber, totalPages) {
   return pageNumber > cfg.start && pageNumber <= totalPages - cfg.end;
 }
 
+function evalAnchorPosition () {
+  document.querySelectorAll('.pages--to-eval--anchor-pagenumber').forEach(elem => {
+    const target = document.querySelector(`[id="${elem.textContent}"]`)
+    if (target) {
+      const page = target.closest('.pages--page');
+      elem.textContent = page.dataset.pageNumber;
+    }
+  });
+}
+
 function applyPagination() {
   const cfg = parsePagination(paginationConfig);
   const pages = document.querySelectorAll('.pages--page');
   const total = pages.length;
   pages.forEach((page, index) => {
     const pageNumber = index + 1;
+    page.dataset.pageNumber = pageNumber;
     if (!isPaginated(cfg, pageNumber, total)) return;
     let footer = page.querySelector('.pages--footer');
     if (!footer) {
@@ -62,4 +73,6 @@ function applyPagination() {
         elem.textContent = String(pageNumber);
     })
   });
+
+  evalAnchorPosition ()
 }

@@ -47,7 +47,9 @@ Header: macro(left:, center:, right:, ?excludeFirst, ?excludeLast)
 end
 
 // Content will be cloned into all page. You can exclude first and last one with flags.
-Footer: macro(left:, center:, right:, ?excludeFirst, ?excludeLast)
+// `side` works only with paginated content and will be placed on the opposite side of the page number.
+// If `pagination` is enable, `left` and `right` may act strangely.
+Footer: macro(left:, center:, right:, side:,?excludeFirst, ?excludeLast)
 	if left
 		$make($left,   footer, left,   excludeFirst: $excludeFirst, excludeLast: $excludeLast)
 	end
@@ -56,5 +58,8 @@ Footer: macro(left:, center:, right:, ?excludeFirst, ?excludeLast)
 	end
 	if right
 		$make($right,  footer, right,  excludeFirst: $excludeFirst, excludeLast: $excludeLast)
+	end
+	if side
+		$make($side,  footer, side,  excludeFirst: $excludeFirst, excludeLast: $excludeLast)
 	end
 end

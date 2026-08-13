@@ -56,10 +56,11 @@ the document is no longer paginated. It is reserved for the engine.
 
 The `Header`/`Footer` macros emit one hidden `--pages-to-insert` div per
 non-empty zone. It carries `zone` (`header`/`footer`), `position`
-(`left`/`center`/`right`) and the `exclude-first`/`exclude-last` flags. The
-`collectHeaderFooter` pass reads them and removes them from the body before
+(`left`/`center`/`right`/`side`) and the `exclude-first`/`exclude-last` flags.
+The `collectHeaderFooter` pass reads them and removes them from the body before
 pagination; `layoutPage` clones their content into each page's header/footer
-slot.
+slot. `side` is only supported by `Footer` and only with paginated content: the
+content is placed on the opposite side of the page number.
 
 **Where it is set:** on the source divs emitted by `Header`/`Footer`
 (`components/header.plume`).
@@ -70,10 +71,10 @@ slot.
 
 > Container of a page's header/footer, created by `layoutPage`.
 
-Holds the three position divs (`.pages--header-left/center/right`,
-`.pages--footer-*`). Created only when the zone has content and is not excluded
-for the page. `flex: 0 0 auto` — its height is content-determined, and
-pagination measures the content slot against it.
+Holds the position divs (`.pages--header-left/center/right`,
+`.pages--footer-left/center/right/side`). Created only when the zone has
+content and is not excluded for the page. `flex: 0 0 auto` — its height is
+content-determined, and pagination measures the content slot against it.
 
 **Where it is set:** on every page that has a header/footer, by `layoutPage`.
 

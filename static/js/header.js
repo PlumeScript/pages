@@ -22,7 +22,7 @@ function collectHeaderFooter(body) {
     const position = div.getAttribute('position');
     div.remove();
     if (zone !== 'header' && zone !== 'footer') return;
-    if (position !== 'left' && position !== 'center' && position !== 'right') return;
+    if (position !== 'left' && position !== 'center' && position !== 'right' && position !== 'side') return;
     configs[zone].push({
       position,
       content: Array.from(div.childNodes),
@@ -56,7 +56,7 @@ function layoutPage(page, configs, pageIndex) {
 function buildZone(zone, configs) {
   const slot = document.createElement('div');
   slot.className = 'pages--' + zone;
-  ['left', 'center', 'right'].forEach(position => {
+  ['left', 'center', 'right', 'side'].forEach(position => {
     const cfg = configs.find(c => c.position === position);
     const pos = document.createElement('div');
     pos.className = 'pages--' + zone + '-' + position;

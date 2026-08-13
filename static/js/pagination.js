@@ -66,9 +66,17 @@ function applyPagination() {
     const span = document.createElement('span');
     span.className = 'pages--page-number';
     span.textContent = String(pageNumber);
-    const side = (pageNumber % 2 === 1) ? 'right' : 'left';
-    footer.querySelector('.pages--footer-' + side).appendChild(span);
+    const pageSide = (pageNumber % 2 === 1)  ? 'right' : 'left';
+    footer.querySelector('.pages--footer-' + pageSide).appendChild(span);
 
+    const otherSide = (pageNumber % 2 === 1) ? 'left' : 'right';
+    const sideElem = footer.querySelector('.pages--footer-side');
+    if (sideElem){
+      sideElem.childNodes.forEach(elem => {
+        footer.querySelector('.pages--footer-' + otherSide).appendChild(elem);
+      })
+    }
+      
     page.querySelectorAll('.pages--to-eval--pagenumber').forEach((elem) => {
         elem.textContent = String(pageNumber);
     })

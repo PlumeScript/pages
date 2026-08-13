@@ -19,7 +19,7 @@ tableOfContents: macro(title:, depth: 2)
 		for header in global.tocContent
 			if header.level <= depth
 				let key = H$(header.level+1)
-				@html.Div(class: pages--toc--elem)
+				@html.A(class: pages--toc--elem, href: #$header.id)
 					@html.Div(class: pages--toc--title)
 						style: (paddingLeft: calc(var(--pages--toc--indent) * $(header.level-1)))
 						- $header.content

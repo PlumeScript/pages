@@ -13,6 +13,9 @@ Licensed under the MIT License — see LICENSE for details.
 	flex-direction: row;
 	align-items: baseline;
 	width: 100%;
+
+	color: var(--text);
+	text-decoration: none;
 }
 
 .pages--toc--dots {

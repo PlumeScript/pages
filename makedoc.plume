@@ -20,7 +20,7 @@ end
 
 let version = v0.4.0
 
-@Document(filename: ./doc/doc, title: Plume Pages Documentation, pagination: 2)
+@Document(filename: ./doc/doc, title: Plume Pages Documentation, pagination: 3)
     @Style
       @Rule(h1)
         background: linear-gradient(20deg, #000, #00ccff 50%)
@@ -43,9 +43,10 @@ let version = v0.4.0
       center: $version
     end
 
-    $newpage
+    $whitePage
     $tableOfContents(title: Table of contents)
     $newpage
+    
 	$chapter(Quick Start)
     $chapter(Global mechanisms)
 		$section(Document)
@@ -67,6 +68,7 @@ let version = v0.4.0
 
 		$section(Numbering Format)
 			Numbering format of titles and lists recognizes a few special characters:
+            $glue
 			@List(marker: arrow)
 				- $code(1) for decimal
 				- $code(a) and $code(A) for lowercase/uppercase letters.

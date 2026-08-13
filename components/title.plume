@@ -7,6 +7,7 @@ Licensed under the MIT License — see LICENSE for details.
 
 let html = $import(html)
 let context = $import(../context)
+let global = $import(../global)
 let applyFormatNumbering from $import(../utils/counterLabel)
 
 let numberTracking = (0, 0, 0, 0, 0, 0)
@@ -25,7 +26,7 @@ end
 // Section heading, auto-numbered.
 // `marker:` see **Numbering Format**.
 // `?hideNumbering` hides the number, `?noNumbering` disables counting.
-ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNumbering)
+ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNumbering, ?hideFromTOC)
 	let formatNumbering
 	if marker != "auto"
 		set formatNumbering = $marker
@@ -56,8 +57,12 @@ ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNu
 		end
 	end
 
+	if not hideFromTOC
+		run $ Table.append(global.tocContent, (level: level, content: title))
+	end
+
 	let key = H$level
-	$html[key]($title)
+	return $html[key]($title)
 end
 
 // alias for `heading(..., level: 1)`

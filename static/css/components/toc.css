@@ -1,0 +1,23 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+:root {
+	--pages--toc--indent: var(--space-2x);
+}
+.pages--toc--elem {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	width: 100%;
+}
+
+.pages--toc--dots {
+	flex-grow: 1;
+	border-bottom: 2px dotted var(--border-strong);
+	margin-right: var(--space-1x);
+	margin-left: var(--space-1x);
+}

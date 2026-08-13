@@ -1,12 +1,11 @@
 use html, css
 use .
 
-macro capitalize(s)
+macro capitalize(String s)
   $s.sub(1).upper()$s.sub(2, -1)
 end
 
-macro escapeHTML(s)
-	set s = $String($s)
+macro escapeHTML(String s)
 	$s.replace(&, &amp;).replace(<, &lt;).replace(>, &gt;).replace(", &quot;)
 end
 
@@ -23,8 +22,8 @@ let version = v0.4.0
 
 @Document(filename: ./doc/doc, title: Plume Pages Documentation)
     @Style
-      @Rule(h1 .pages--title-body)
-        background: linear-gradient(to right, #000, #00ccff 70%)
+      @Rule(h1)
+        background: linear-gradient(20deg, #000, #00ccff 50%)
         $("-webkit-background-clip"): text
         $("-webkit-text-fill-color"): transparent
       end
@@ -43,9 +42,12 @@ let version = v0.4.0
     @Footer(?excludeFirst)
       center: $version
     end
-    
+
     $newpage
-	$chapter(Global mechanisms)
+    $tableOfContents(title: Table of content)
+    $newpage
+	$chapter(Quick Start)
+    $chapter(Global mechanisms)
 		$section(Document)
 			The macro $code(Document)$newpar
 			$bold(Usage)\: $code(Document $plume.doc($Document).signature)$newpar
@@ -82,7 +84,8 @@ let version = v0.4.0
 			
 			The default values are set by the contextual variables $code(formatNumbering1 to formatNumbering6).
 
-	$chapter(List of components)
+	$chapter(Components)
+    $chapter(List of exposed variables)
 		for component in os.Path("./components").walk()
 			$ section(capitalize(component.getStem()))
 			for name, elem in items(component.import())

@@ -10,7 +10,7 @@ Licensed under the MIT License — see LICENSE for details.
 	font-size: 80%;
 	color: var(--muted);
 
-	.pages--toc & {
+	.pages--toc--elem & {
 		font-variant-numeric: tabular-nums;
 	} 
 }
@@ -19,3 +19,4 @@ h1 .pages--title-number {
 	font-size: 100%;
 	color: var(--text);
 }
+

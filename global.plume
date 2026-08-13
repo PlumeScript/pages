@@ -1,3 +1,4 @@
 documentTitle: $empty
 documentAuthor: $empty
 fontsToLoad: $Table()
+tocContent: $Table()

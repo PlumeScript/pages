@@ -16,6 +16,16 @@ Licensed under the MIT License — see LICENSE for details.
 
 	display: flex;
 	flex-direction: column;
+
+	.pages--gutter &:not(:first-child):not(:last-child) {
+		&:nth-child(2n) {
+			padding-right: calc(var(--page-margin-right) + var(--page-margin-gutter));
+		}
+		&:nth-child(2n+1) {
+			padding-left: calc(var(--page-margin-left) + var(--page-margin-gutter));
+		}
+	}
+	
 }
 
 .pages--header,

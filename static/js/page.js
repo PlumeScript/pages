@@ -212,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
   autoParagraph(document.body);
   const finish = () => {
     makePages();
+    applyPagination();
     window.__pagesReadyResolve();
   };
   if (window.MathJax && window.MathJax.startup && hasMath) {

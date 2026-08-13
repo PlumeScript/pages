@@ -41,7 +41,9 @@ loadFont: macro(path)
 	$ Table.append(global.fontsToLoad, path)
 end
 
-Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?landscape)
+// Pagination: auto, enable, disable, x, x-y
+// Gutter: auto, enable, disable
+Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape)
 	if filename
 		if not filename.find("%.html^", ?rich)
 			set filename = $filename\0.html
@@ -77,7 +79,7 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?
 						$var(pageMarginBottom): 30mm
 						$var(pageMarginLeft):   30mm
 						$var(pageMarginRight):  30mm
-						$var(pageMarginGutter): 0
+						$var(pageMarginGutter): 10mm
 					end
 					
 					for stylesheet in os.Path("./static/css").walk()
@@ -91,10 +93,14 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?
 			end
 
 			@html.Body
-				$content
+				if gutter == "enable" or gutter == "auto" and pagination != "disable"
+					class: pages--gutter
+				end
+				- $content
 			end
 
 			@html.Script
+				\0let paginationConfig = "$pagination";\n
 				for script in os.Path("./static/js").walk()
 					if script.isFile()
 						$cleanImported($script.read())

@@ -20,7 +20,7 @@ end
 
 let version = v0.4.0
 
-@Document(filename: ./doc/doc, title: Plume Pages Documentation)
+@Document(filename: ./doc/doc, title: Plume Pages Documentation, pagination: 2)
     @Style
       @Rule(h1)
         background: linear-gradient(20deg, #000, #00ccff 50%)

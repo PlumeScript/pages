@@ -57,5 +57,9 @@ function applyPagination() {
     span.textContent = String(pageNumber);
     const side = (pageNumber % 2 === 1) ? 'right' : 'left';
     footer.querySelector('.pages--footer-' + side).appendChild(span);
+
+    page.querySelectorAll('.pages--to-eval--pagenumber').forEach((elem) => {
+        elem.textContent = String(pageNumber);
+    })
   });
 }

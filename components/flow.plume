@@ -14,3 +14,5 @@ newpage: $html.Div($empty, style:(breakBefore: page))
 
 vfill: $html.Div($empty, class: pages--flow--vfill)
 glue: $html.Div($empty, class: pages--flow--glue)
+
+pageNumber: $html.Span(, class:pages--to-eval--pagenumber)

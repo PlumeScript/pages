@@ -83,4 +83,10 @@ function applyPagination() {
   });
 
   evalAnchorPosition ()
+
+  if (cfg.mode == "disable") {
+    document.querySelectorAll(".pages--toc--dots, .pages--toc--pages").forEach(elem=>{
+      elem.style.display = "none";
+    })
+  }
 }

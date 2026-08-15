@@ -6,8 +6,8 @@ Licensed under the MIT License — see LICENSE for details.
 */
 
 :root {
-	--font-title: "Arial";
-	--font-body: "Lato Regular";
+	--font-title: "Lora";
+	--font-body: "Lora";
 	--text-xs:   0.75rem;
 	--text-sm:   0.875rem;
 	--text-base: 1rem;
@@ -33,7 +33,7 @@ Licensed under the MIT License — see LICENSE for details.
 	--font-weight-medium: 500;
 	--font-weight-bold:   700;
 
-	--font-mono: "Consolas", "Courier New", monospace;
+	--font-mono: "FiraCode";
 	--radius-sm: 0.25rem;
 
 	--max-width: 65ch;
@@ -98,14 +98,15 @@ h4 {
 
 p {
 	margin: 0;
+	font-weight: var(--font-weight-medium);
 
   max-width: var(--max-width);
-  text-align: justify;
+  text-align: left;
   text-wrap: pretty;
   hyphens: auto;
 
   &:not(:last-child) {
-  	margin-bottom: var(--space-1x);
+  	margin-bottom: var(--space-2x);
   }
 
   & mjx-container {

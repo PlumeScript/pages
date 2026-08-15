@@ -2,11 +2,11 @@ plumeVersion: b62 (Owl Edition)
 name: Pages
 author: Erwan Barbedor
 description:
-version: 0.3.0
+version: 0.4.0
 source: github.com/PlumeScript/pages
 required: do
 	html: do
-		version: ^0.2.x
+		version: ^0.3.x
 		source: github.com/PlumeScript/html
 	end
 end

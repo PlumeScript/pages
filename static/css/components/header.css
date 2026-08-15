@@ -1,0 +1,25 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+.pages--header {
+	margin-top: calc(-1 * var(--page-margin-top)/2);
+	margin-bottom: calc(var(--page-margin-top)/2);
+	
+	font-style: italic;
+	border-bottom: 1px solid var(--border-strong);
+}
+
+.pages--footer {
+	margin-top: calc(var(--page-margin-bottom)/2);
+	margin-bottom: calc(-1 * var(--page-margin-bottom)/2);
+
+	font-weight: var(--font-weight-bold);
+}
+
+.pages--footer-side {
+	display: none;
+}

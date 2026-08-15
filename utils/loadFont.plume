@@ -1,0 +1,89 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+let base64 = $import(./base64)
+let global = $import(../global)
+
+macro(path)
+	if type(path) == "string"
+		raise Given `path` must be an url or an `os.Path` object, not a `string`.
+	else
+		if not path.exists()
+			raise Font "$path" not found.
+		end
+
+		let fontName = $path.getName()
+
+		for elem in path.walk()
+			let name = $elem.getStem().lower().replace($fontName-,)
+
+			let ext = $elem.getExtension().lower()
+			let MIME = if Table.find(("ttf", "otf", "woff", "woff2"), ext)
+				font/$ext
+			end
+			let FORMAT = if ext == "ttf"
+				truetype
+			elseif ext == "otf"
+				opentype
+			elseif Table.find(("woff", "woff2"), ext)
+				$ext
+			end
+
+			if not MIME
+				continue
+			end
+
+			let props = do
+				- black
+				- medium
+				- regular
+				- thin
+				- light
+				- italic
+				- semibold
+				- extrabold
+				- bold
+			end
+
+			for prop in props
+				if name.find(prop)
+					set name = $ name.replace(prop,)
+					set props[prop] = $true
+				end
+			end
+
+			\0@font-face {
+				font-family: "$fontName";
+				src\: url(data:$MIME;base64,$base64($elem)) format("$FORMAT");\n
+				font-weight:
+				if props.black?
+					900
+				elseif props.extrabold?
+					800
+				elseif props.bold?
+					700
+				elseif props.semibold?
+					600
+				elseif props.medium?
+					500
+				elseif props.thin?
+					300
+				elseif props.light?
+					200
+				else
+					400
+				end
+				;
+
+
+				if props.italic?
+					font-style: italic;
+				end
+			}
+		end
+	end
+end

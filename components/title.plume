@@ -7,9 +7,11 @@ Licensed under the MIT License — see LICENSE for details.
 
 let html = $import(html)
 let context = $import(../context)
+let global = $import(../global)
 let applyFormatNumbering from $import(../utils/counterLabel)
 
 let numberTracking = (0, 0, 0, 0, 0, 0)
+let lastRef
 
 // Set the numbering counter of a heading level.
 headingSetCounter: macro(level, Number value)
@@ -25,7 +27,7 @@ end
 // Section heading, auto-numbered.
 // `marker:` see **Numbering Format**.
 // `?hideNumbering` hides the number, `?noNumbering` disables counting.
-ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNumbering)
+ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNumbering, ?hideFromTOC)
 	let formatNumbering
 	if marker != "auto"
 		set formatNumbering = $marker
@@ -45,19 +47,45 @@ ref heading: macro(String title, Number level: 1, marker:, ?hideNumbering, ?noNu
 		set numberTracking[level] += 1
 	end
 
+	let numbering
+	let rawTitle = $title
 	if not hideNumbering and not noNumbering
+		set numbering = $applyFormatNumbering($level, $formatNumbering, $numberTracking)
 		set title = do
-			@html.Span(class: page--title-number)
-				$applyFormatNumbering($level, $formatNumbering, $numberTracking)
+			@html.Span(class: pages--title-number)
+				$numbering
 			end
-			@html.Span(class: page--title-body)
+			@html.Span(class: pages--title-body)
 				$title
 			end
 		end
 	end
 
+	let id = if not noNumbering
+		heading-$Table.join(sep:_, ...numberTracking)
+	else
+		heading-$title.replace([<>"'%s],-,?rich)
+	end
+
+	if not hideFromTOC
+		run $ Table.append(global.tocContent, (level: level, content: title, id: id))
+	end
+
+	set lastRef = (anchor: #$id, numbering: $numbering, title: $rawTitle)
 	let key = H$level
-	$html[key]($title)
+	return $ html[key](title, id: id)
+end
+
+// Return informations about last heading as table with fields:
+// `anchor`: to make intern jumps, like `$link(this section, $ref.anchor)`
+// `numbering`: formated numbering, if any.
+// `title`
+getHeadingRef: macro()
+	if not lastRef
+		raise No ref was defined.
+	end
+
+	return $lastRef
 end
 
 // alias for `heading(..., level: 1)`

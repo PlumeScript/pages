@@ -8,8 +8,6 @@ Licensed under the MIT License — see LICENSE for details.
 // Captured during parsing, before MathJax (defer) consumes the math scripts.
 const hasMath = !!document.querySelector('script[type^="math/"]');
 
-// Signal de fin de rendu pour l'hôte (Calame) : se résout une fois la page
-// paginée et espacée, après MathJax le cas échéant.
 window.__pagesReady = new Promise((resolve) => {
   window.__pagesReadyResolve = resolve;
 });
@@ -45,11 +43,14 @@ function elOverflow(parent, child) {
 // Does a set of elements fit on a fresh, empty page? Fallback for
 // keep-with-next: if the tied run + the overflowing element can't fit together
 // on a new page, there is no solution and we break anyway (avoid is a hint).
-function fitsOnEmptyPage(elements) {
+// Measures against the content slot so the header/footer heights are counted.
+function fitsOnEmptyPage(elements, configs) {
   const page = createPage(document.body);
   page.style.overflow = 'hidden';
-  elements.forEach(el => page.appendChild(el.cloneNode(true)));
-  const fits = page.clientHeight - page.scrollHeight >= 0;
+  const content = layoutPage(page, configs, 1); // middle page: header/footer present
+  content.style.overflow = 'hidden';
+  elements.forEach(el => content.appendChild(el.cloneNode(true)));
+  const fits = content.clientHeight - content.scrollHeight >= 0;
   document.body.removeChild(page);
   return fits;
 }
@@ -83,7 +84,7 @@ function avoidRun(dest, next) {
   return run;
 }
 
-function insertElements(source, dest) {
+function insertElements(source, dest, configs) {
   while (source.firstChild) {
     const el = source.firstChild;
 
@@ -107,7 +108,7 @@ function insertElements(source, dest) {
       // the next page so they stay with el — unless they can't fit together on
       // a fresh page (no solution → break here anyway).
       const run = avoidRun(dest, el);
-      if (run.length > 0 && fitsOnEmptyPage(run.concat([el]))) {
+      if (run.length > 0 && fitsOnEmptyPage(run.concat([el]), configs)) {
         // Insert before a stable reference: source.firstChild changes on each
         // insert, which would reverse the run.
         const first = source.firstChild;
@@ -127,7 +128,7 @@ function insertElements(source, dest) {
 
 function makePages() {
   if (document.body.querySelector('.pages--page')) return;
-  
+
   const body = document.body.cloneNode(true);
   document.body.innerHTML = ''
 
@@ -139,9 +140,29 @@ function makePages() {
     }
   });
 
+  const configs = collectHeaderFooter(body);
+
+  let pageIndex = 0;
   while (body.firstChild) {
     var currentPage = createPage(document.body)
-    insertElements(body, currentPage)
+    const content = layoutPage(currentPage, configs, pageIndex)
+    insertElements(body, content, configs)
+    pageIndex++
+  }
+
+  // excludeLast: the last page is only known once pagination ends. Remove the
+  // header/footer slot from it (the content keeps its height — whitespace below).
+  const pages = document.body.querySelectorAll('.pages--page');
+  const last = pages[pages.length - 1];
+  if (last) {
+    if (configs.header.some(c => c.excludeLast)) {
+      const header = last.querySelector('.pages--header');
+      if (header) header.remove();
+    }
+    if (configs.footer.some(c => c.excludeLast)) {
+      const footer = last.querySelector('.pages--footer');
+      if (footer) footer.remove();
+    }
   }
 }
 
@@ -191,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
   autoParagraph(document.body);
   const finish = () => {
     makePages();
+    applyPagination();
     window.__pagesReadyResolve();
   };
   if (window.MathJax && window.MathJax.startup && hasMath) {

@@ -1,5 +1,5 @@
 /*
-Pages 0.3.0 - A Plume🪶 document generator
+Pages 0.4.0 - A Plume🪶 document generator
 
 Copyright © 2026-2026 Erwan Barbedor
 
@@ -27,6 +27,7 @@ let var, Rule from $import(css)
 let initPageFormat = $import(./initPageFormat)
 let context = $import(./context)
 let cleanImported = $import(./utils/cleanImported)
+let loadFont = $import(./utils/loadFont)
 let global = $import(./global)
 
 for component in os.Path("./components").walk()
@@ -35,25 +36,42 @@ end
 
 pagesContext: $context
 
-Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?landscape)
+// `path` must be an `os.Path` object targeting a directory.
+loadFont: macro(path)
+	$ Table.append(global.fontsToLoad, path)
+end
+
+// Pagination: auto, enable, disable, x, x-y
+// Gutter: auto, enable, disable
+Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape)
 	if filename
 		if not filename.find("%.html^", ?rich)
 			set filename = $filename\0.html
 		end
 	end
 
+	if (context.titleFont() == "Lora" or context.bodyFont() == "Lora")
+		run $Table.append($global.fontsToLoad, $os.Path(./static/fonts/Lora))
+	end
+	if (context.monoFont() == "FiraCode")
+		run $Table.append($global.fontsToLoad, $os.Path(./static/fonts/FiraCode))
+	end
+
 	let result = do
-		@html.Tag(HTML, lang: $(lang or plume.locale() or "en"))
+		@html.Html(lang: $(lang or plume.locale() or "en"))
 			@html.Head
-				$html.Tag(meta,, charset: UTF-8, ?noClose)
+				$html.Meta(charset: UTF-8, ?noClose)
 				if global.documentAuthor
-					$html.Tag(meta,, name: author, content: $global.documentAuthor, ?noClose)
+					$html.Meta(name: author, content: $global.documentAuthor, ?noClose)
 				end
 				set title = $ title or global.documentTitle or filename
 				if title
-					$html.Tag(title, $title)
+					$html.Title($title)
 				end
 				@html.Style
+					for path in global.fontsToLoad
+						$ loadFont(path)
+					end
 					@Rule(:root)
 						...initPageFormat($pageFormat, landscape: $landscape)
 
@@ -61,10 +79,10 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?
 						$var(pageMarginBottom): 30mm
 						$var(pageMarginLeft):   30mm
 						$var(pageMarginRight):  30mm
-						$var(pageMarginGutter): 0
+						$var(pageMarginGutter): 10mm
 					end
 					
-					for stylesheet in os.Path("./css").walk()
+					for stylesheet in os.Path("./static/css").walk()
 						if stylesheet.isFile()
 							$cleanImported($stylesheet.read())
 						end
@@ -75,11 +93,15 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, ?paginated, ?
 			end
 
 			@html.Body
-				$content
+				if gutter == "enable" or gutter == "auto" and pagination != "disable"
+					class: pages--gutter
+				end
+				- $content
 			end
 
 			@html.Script
-				for script in os.Path("./js").walk()
+				\0let paginationConfig = "$pagination";\n
+				for script in os.Path("./static/js").walk()
 					if script.isFile()
 						$cleanImported($script.read())
 					end

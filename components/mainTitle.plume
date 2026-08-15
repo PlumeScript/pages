@@ -21,7 +21,7 @@ MainTitle: macro(title:, subtitle:, author:, date:, institution:)
 			$html.P($author, class: pages--main-title--author)
 		end
 		if date or institution
-			@html.Div(class: class: pages--main-title--author-date-wrapper)
+			@html.Div(class: pages--main-title--author-date-wrapper)
 				if date
 					$html.P($date, class: pages--main-title--date)
 				end

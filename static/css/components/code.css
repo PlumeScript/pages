@@ -6,16 +6,18 @@ Licensed under the MIT License — see LICENSE for details.
 */
 
 .pages--frame--code, .pages--frame--blockcode{
-	
 	font-family: var(--font-mono);
 	background: var(--highlight-background);
 	border-radius: var(--radius-sm);
 	break-inside: avoid;
+
+	font-weight: var(--font-weight-normal);
+	font-size: 80%;
 }
 
 .pages--frame--code {
-	white-space: pre-wrap;
-    overflow-wrap: anywhere;
+	white-space: pre;
+    overflow-x: hidden;
 	padding: 0.1em 0.35em;
 }
 

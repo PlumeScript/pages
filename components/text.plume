@@ -6,7 +6,6 @@ Licensed under the MIT License — see LICENSE for details.
 */
 
 let html = $import(html)
-Par: $html.P
 
 bold: macro(content)
 	$html.Span($content, class: pages--text--bold)

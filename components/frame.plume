@@ -20,7 +20,7 @@ Blockquote: macro(content, author:, title:)
 end
 
 code: macro(content)
-	@html.Tag(Code, class: pages--frame--code)
+	@html.Code(class: pages--frame--code)
 		$content
 	end
 end

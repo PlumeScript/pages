@@ -1,0 +1,37 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+let global = $import(../global)
+let html = $import(html)
+
+// Create a (paginated) table of contents from all headings that do not include the `?hideFromTOC` flag and whose level is less than or equal to `depth`.
+tableOfContents: macro(title:, depth: 2)
+	meta fragment: macro()
+		if title
+			@html.H1(class: pages--toc--header)
+				$title
+			end
+		end
+		for header in global.tocContent
+			if header.level <= depth
+				let key = H$(header.level+1)
+				@html.A(class: pages--toc--elem, href: #$header.id)
+					@html.Div(class: pages--toc--title)
+						style: (paddingLeft: calc(var(--pages--toc--indent) * $(header.level-1)))
+						- $header.content
+					end
+					$html.Div(,class: pages--toc--dots)
+					@html.Div(class: pages--toc--pages)
+						p$html.Span($header.id, class: pages--to-eval--anchor-pagenumber)
+					end
+				end
+			end
+		end
+
+		set global.tocContent = $Table()
+	end
+end

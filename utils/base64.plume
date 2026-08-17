@@ -8,7 +8,7 @@ Licensed under the MIT License — see LICENSE for details.
 // Workaround: os.Path.write doesn't support binary mode, and Plume is missing bytes manipulation features
 macro(path)
 	let strpath = $ String(path)
-	let cachePath = $os.Path(static/.cache/$strpath.replace(-, --).replace([/\\:], -, ?rich))
+	let cachePath = $os.Path(../static/.cache/$strpath.replace(-, --).replace([/\\:], -, ?rich))
 	
 	if cachePath.exists() and cachePath.getModification() > path.getModification()
 		return $cachePath.read()

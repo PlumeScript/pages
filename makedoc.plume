@@ -18,7 +18,7 @@ macro formatLine(line)
 	return $line
 end
 
-let version = v0.4.0
+let version = v0.5.0
 
 @Document(filename: ./doc/doc, title: Plume Pages Documentation, pagination: 3)
     @Style

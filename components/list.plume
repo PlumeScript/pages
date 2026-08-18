@@ -19,9 +19,8 @@ let listDeep = 0
 // Bulleted or numbered list.
 // To choose the bullet, set `marker` to `bullet`, `star`, `arrow`, `dash`, `cross`, `check` or a custom one.
 // To make an ordered List, set `marker` to `auto` or use **Numbering Format**.
-// If `marker` value is interpreted but shouldn't be, use `rawmarker` instead.
 // `indent` sets the left padding.
-ref List: macro(Number indent: 4, Number columns: 1, marker:, rawmarker:,...items)
+ref List: macro(Number indent: 4, Number columns: 1, marker:,...items)
 	let bullet, formatNumbering, ordered
 
 	if marker == "bullet"
@@ -38,11 +37,13 @@ ref List: macro(Number indent: 4, Number columns: 1, marker:, rawmarker:,...item
 		set bullet = ✓ 
 	elseif marker == "auto"
 		set ordered = $true
-	elseif marker.find("[aAiI1*]", ?rich)
+	elseif marker.find("%%[aAiI1*]", ?rich)
 		set ordered = $true
 		set formatNumbering = $marker
+	elseif marker.find("%%p", ?rich)
+		set bullet = $marker.replace(%%p, %%, ?rich)
 	else
-		set bullet = $(rawmarker or marker)
+		set bullet = $marker
 	end
 
 	let style = @css.css

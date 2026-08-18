@@ -17,7 +17,7 @@ Table: macro(?zebra, ...rows)
 	@html.Table(class: pages--table $(zebra and "pages--table--zebra"))
 		if rows.header?
 			if type(rows.header) != "table"
-				raise Header must be a table.
+				raise Header must be "table", not "$type($rows.header)".
 			end
 			@html.Thead(class: pages--table--row pages--table--row-header)
 				@html.Tr(class: pages--table--row)
@@ -32,7 +32,7 @@ Table: macro(?zebra, ...rows)
 
 		for row in rows
 			if type(row) != "table"
-				raise Table element must be tables.
+				raise Table element must be "table", not "$type($row)".
 			end
 			
 			@html.Tr(class: pages--table--row)

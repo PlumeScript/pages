@@ -1,3 +1,5 @@
+use #rawNumbers
+
 documentTitle: $empty
 documentAuthor: $empty
 fontsToLoad: $Table()

@@ -5,6 +5,8 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
+use #rawNumbers
+
 formatNumbering1: $Context(1\0.)
 formatNumbering2: $Context(*1)
 formatNumbering3: $Context(*.1)

@@ -58,7 +58,7 @@ macro(path)
 				end
 			end
 
-			\0@font-face {
+			\@font-face {
 				font-family: "$fontName";
 				src\: url(data:$MIME;base64,$base64($elem)) format("$FORMAT");\n
 				font-weight:

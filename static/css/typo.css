@@ -21,6 +21,8 @@ Licensed under the MIT License — see LICENSE for details.
 	--leading-normal:   1.32;
 	--leading-relaxed:  1.45;
 
+	--space-xxs:  0.125rem;
+	--space-xs:  0.25rem;
 	--space-1x:  0.5rem;
 	--space-2x:  1rem;
 	--space-3x:  1.5rem;

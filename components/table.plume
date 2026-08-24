@@ -14,20 +14,44 @@ ref rowspan: $Table()
 
 // Make a table from a List of Lists
 // You can provide an `header` key with the first row as value.
+// You can provide an `align` key with a string value or a table of value. Accepted value: right, left, center.
+// You can also provide a `verticalAlign` key. Accepted value: top, middle, bottom.
 // `?zebra` alternates row colors.
 // User $colspan and $rowspan variable BEFORE the cell to expand.
 // **Example:** ```@Table\n    header: (id, name, price)\n    - (1, Apple, 2€)\n    - (2, Orange, 3€)\nend```
 Table: macro(?zebra, ...rows)
 	@html.Table(class: pages--table $(zebra and "pages--table--zebra"))
+		macro getTdHorizontalAlign(i)
+			if rows.align?
+				if type(rows.align) == "string"
+					pages--flow--align pages--flow--align-$rows.align
+				elseif rows.align[i]?
+					pages--flow--align pages--flow--align-$rows.align[i]
+				end
+			end
+		end
+		macro getTdVerticalAlign(i)
+			if rows.verticalAlign?
+				if type(rows.verticalAlign) == "string"
+					pages--flow--align--cell-trick pages--flow--align-$rows.verticalAlign
+				elseif rows.verticalAlign[i]?
+					pages--flow--align--cell-trick pages--flow--align-$rows.verticalAlign[i]
+				end
+			end
+		end
+
 		if rows.header?
 			if type(rows.header) != "table"
 				raise Header must be "table", not "$type($rows.header)".
 			end
 			@html.Thead(class: pages--table--row pages--table--row-header)
 				@html.Tr(class: pages--table--row)
-					for cell in rows.header
-						@html.Th(class: pages--table--cell pages--table--cell-header)
-							$cell
+					for i, cell in enumerate(rows.header)
+						@html.Th
+							class: pages--table--cell pages--table--cell-header
+							- @html.Div(class: $getTdHorizontalAlign($i) $getTdVerticalAlign(1))
+								$cell
+							end
 						end
 					end
 				end
@@ -36,7 +60,11 @@ Table: macro(?zebra, ...rows)
 
 		let rowspanCollector = $Table()
 
-		for  row in rows
+		for j, row in enumerate(rows)
+			if rows.header?
+				set j += 1
+			end
+
 			if type(row) != "table"
 				raise Table element must be "table", not "$type($row)".
 			end
@@ -58,9 +86,11 @@ Table: macro(?zebra, ...rows)
 						let t = do
 							meta fragment: macro()
 								@html.Td
-									class: pages--table--cell
+									class: pages--table--cell)
 									rowspan: $infos.count
-									- $infos.content
+									- @html.Div(class: $getTdHorizontalAlign($i) $getTdVerticalAlign($j))
+										$infos.content
+									end
 								end
 							end
 						end
@@ -71,7 +101,9 @@ Table: macro(?zebra, ...rows)
 							if colspanCount>1
 								colspan: $colspanCount
 							end
-							- $cell
+							- @html.Div(class: $getTdHorizontalAlign($i) $getTdVerticalAlign($j))
+								$cell
+							end
 						end
 						set colspanCount = 1
 					end

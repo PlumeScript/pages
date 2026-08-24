@@ -15,6 +15,7 @@ ref rowspan: $Table()
 // Make a table from a List of Lists
 // You can provide an `header` key with the first row as value.
 // `?zebra` alternates row colors.
+// User $colspan and $rowspan variable BEFORE the cell to expand.
 // **Example:** ```@Table\n    header: (id, name, price)\n    - (1, Apple, 2€)\n    - (2, Orange, 3€)\nend```
 Table: macro(?zebra, ...rows)
 	@html.Table(class: pages--table $(zebra and "pages--table--zebra"))
@@ -52,18 +53,18 @@ Table: macro(?zebra, ...rows)
 							set rowspanCollector[i] = $empty
 						end
 					elseif cell == rowspan
-						set rowspanCollector[i] = do
-							count: 1
-							content: begin
+						let infos = (count: 1, content: begin)
+						set rowspanCollector[i] = $infos
+						let t = do
 							meta fragment: macro()
 								@html.Td
 									class: pages--table--cell
-									rowspan: $self.count
-									- $self.content
+									rowspan: $infos.count
+									- $infos.content
 								end
 							end
 						end
-						$rowspanCollector[i]
+						$t
 					else
 						@html.Td
 							class: pages--table--cell

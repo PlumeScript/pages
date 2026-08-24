@@ -119,6 +119,7 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 
 			@html.Script
 				\0let paginationConfig = "$pagination";\n
+				\0let localeConfig     = "$plume.locale()";\n
 				for script in os.Path("./static/js").walk()
 					if script.isFile()
 						$cleanImported($script.read())

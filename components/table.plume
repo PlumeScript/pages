@@ -9,6 +9,9 @@ use #rawNumbers
 
 let html = $import(html)
 
+ref colspan: $Table()
+ref rowspan: $Table()
+
 // Make a table from a List of Lists
 // You can provide an `header` key with the first row as value.
 // `?zebra` alternates row colors.
@@ -30,15 +33,46 @@ Table: macro(?zebra, ...rows)
 			end
 		end
 
-		for row in rows
+		let rowspanCollector = $Table()
+
+		for  row in rows
 			if type(row) != "table"
 				raise Table element must be "table", not "$type($row)".
 			end
 			
+			let colspanCount = 1
 			@html.Tr(class: pages--table--row)
-				for cell in row
-					@html.Td(class: pages--table--cell)
-						$cell
+				for i, cell in  enumerate(row)
+					if cell == colspan
+						set colspanCount += 1
+					elseif rowspanCollector[i]?
+						set rowspanCollector[i].count += 1
+						if cell != rowspan
+							set rowspanCollector[i].content = $cell
+							set rowspanCollector[i] = $empty
+						end
+					elseif cell == rowspan
+						set rowspanCollector[i] = do
+							count: 1
+							content: begin
+							meta fragment: macro()
+								@html.Td
+									class: pages--table--cell
+									rowspan: $self.count
+									- $self.content
+								end
+							end
+						end
+						$rowspanCollector[i]
+					else
+						@html.Td
+							class: pages--table--cell
+							if colspanCount>1
+								colspan: $colspanCount
+							end
+							- $cell
+						end
+						set colspanCount = 1
 					end
 				end
 			end

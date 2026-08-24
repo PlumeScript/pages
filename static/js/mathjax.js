@@ -7,7 +7,11 @@ Licensed under the MIT License — see LICENSE for details.
 
 window.MathJax = {
   loader: { load: ['input/asciimath'] },
-  tex: { inlineMath: [], displayMath: [] },
+  tex: {
+    inlineMath: [],
+    displayMath: [],
+    numberPattern: localeConfig=="fr" && /^(?:[0-9]+(?:,[0-9]*)?|,[0-9]+)/ || /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)/
+  },
   asciimath: { delimiters: [] },
 
   startup: {

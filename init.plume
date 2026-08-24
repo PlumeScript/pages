@@ -42,6 +42,32 @@ loadFont: macro(path)
 	$ Table.append(global.fontsToLoad, path)
 end
 
+// Called at document start
+ref makeStyle: macro(pageFormat:, ?landscape)
+	@html.Style
+		for path in global.fontsToLoad
+			$ loadFont(path)
+		end
+		if pageFormat
+			@Rule(:root)
+				...initPageFormat($pageFormat, landscape: $landscape)
+
+				$var(pageMarginTop):    30mm
+				$var(pageMarginBottom): 30mm
+				$var(pageMarginLeft):   30mm
+				$var(pageMarginRight):  30mm
+				$var(pageMarginGutter): 10mm
+			end
+		end
+		
+		for stylesheet in os.Path("./static/css").walk()
+			if stylesheet.isFile() and (pageFormat or not String(stylesheet).find("/page/"))
+				$cleanImported($stylesheet.read())
+			end
+		end
+	end
+end
+
 // Pagination: auto, enable, disable, x, x-y
 // Gutter: auto, enable, disable
 Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape)
@@ -69,26 +95,7 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 				if title
 					$html.Title($title)
 				end
-				@html.Style
-					for path in global.fontsToLoad
-						$ loadFont(path)
-					end
-					@Rule(:root)
-						...initPageFormat($pageFormat, landscape: $landscape)
-
-						$var(pageMarginTop):    30mm
-						$var(pageMarginBottom): 30mm
-						$var(pageMarginLeft):   30mm
-						$var(pageMarginRight):  30mm
-						$var(pageMarginGutter): 10mm
-					end
-					
-					for stylesheet in os.Path("./static/css").walk()
-						if stylesheet.isFile()
-							$cleanImported($stylesheet.read())
-						end
-					end
-				end
+				$makeStyle(pageFormat: $pageFormat, landscape: $landscape)
 
 				$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax\@4/tex-mml-svg.js, ?defer)
 			end

@@ -24,3 +24,18 @@ Licensed under the MIT License — see LICENSE for details.
 	break-before: avoid;
 	break-after: avoid;
 }
+
+.pages--flow--align {
+	display: flex;
+	flex-direction: column;
+}
+
+.pages--flow--align-center {
+	align-items: center;
+}
+.pages--flow--align-left {
+	align-items: flex-start;
+}
+.pages--flow--align-right {
+	align-items: flex-end;
+}

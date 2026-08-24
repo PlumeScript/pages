@@ -20,7 +20,7 @@ let listDeep = 0
 // To choose the bullet, set `marker` to `bullet`, `star`, `arrow`, `dash`, `cross`, `check` or a custom one.
 // To make an ordered List, set `marker` to `auto` or use **Numbering Format**.
 // `indent` sets the left padding.
-ref List: macro(Number indent: 4, Number columns: 1, marker:,...items)
+ref List: macro(Number indent: 4, Number columns: 1, Number gap: 0, marker:,...items)
 	let bullet, formatNumbering, ordered
 
 	if marker == "bullet"
@@ -48,7 +48,12 @@ ref List: macro(Number indent: 4, Number columns: 1, marker:,...items)
 
 	let style = @css.css
 		gridTemplateColumns: repeat($columns, 1fr)
-		paddingLeft: calc($indent * var(--space-1x))
+		if indent>0
+			paddingLeft: calc($indent * var(--space-1x))
+		end
+		if gap>0
+			gap: calc($gap * var(--space-1x))
+		end
 	end
 
 	meta fragment: macro()

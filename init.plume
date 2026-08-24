@@ -42,6 +42,12 @@ loadFont: macro(path)
 	$ Table.append(global.fontsToLoad, path)
 end
 
+Style: macro(content)
+	$ Table.append(global.styleToAppend, content)
+end
+
+Rule: $Rule
+
 // Called at document start
 ref makeStyle: macro(pageFormat:, ?landscape)
 	@html.Style
@@ -64,6 +70,10 @@ ref makeStyle: macro(pageFormat:, ?landscape)
 			if stylesheet.isFile() and (pageFormat or not String(stylesheet).find("/page/"))
 				$cleanImported($stylesheet.read())
 			end
+		end
+
+		for style in global.styleToAppend
+			$style
 		end
 	end
 end

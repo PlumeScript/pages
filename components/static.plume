@@ -1,0 +1,25 @@
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+let html = $import(html)
+let css  = $import(css)
+let global = $import(./global)
+
+Style: macro(content)
+	$ Table.append(global.styleToAppend, content)
+end
+
+Script: macro(...args)
+	$ Table.append(global.scriptToAppend, html.Script(...args))
+end
+
+Rule: $css.Rule
+
+// `path` must be an `os.Path` object targeting a directory.
+loadFont: macro(path)
+	$ Table.append(global.fontsToLoad, path)
+end

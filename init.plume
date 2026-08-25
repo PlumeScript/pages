@@ -37,20 +37,6 @@ end
 
 pagesContext: $context
 
-// `path` must be an `os.Path` object targeting a directory.
-loadFont: macro(path)
-	$ Table.append(global.fontsToLoad, path)
-end
-
-Style: macro(content)
-	$ Table.append(global.styleToAppend, content)
-end
-Script: macro(...args)
-	$ Table.append(global.scriptToAppend, html.Script(...args))
-end
-
-Rule: $Rule
-
 // Called at document start
 ref makeStyle: macro(pageFormat:, ?landscape)
 	@html.Style

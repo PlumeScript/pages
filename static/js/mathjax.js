@@ -10,8 +10,7 @@ window.MathJax = {
   tex: {
     inlineMath: [],
     displayMath: [],
-    numberPattern: localeConfig=="fr" && /^(?:[0-9]+(?:,[0-9]*)?|,[0-9]+)/ || /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)/,
-     mathStyle: 'upright'
+    numberPattern: localeConfig=="fr" && /^(?:[0-9]+(?:,[0-9]*)?|,[0-9]+)/ || /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)/
   },
   asciimath: { delimiters: [] },
 

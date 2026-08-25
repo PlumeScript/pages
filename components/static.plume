@@ -7,9 +7,9 @@ Licensed under the MIT License — see LICENSE for details.
 
 let html = $import(html)
 let css  = $import(css)
-let global = $import(./global)
+let global = $import(../global)
 
-Style: macro(content)
+ref Style: macro(content)
 	$ Table.append(global.styleToAppend, content)
 end
 
@@ -22,4 +22,38 @@ Rule: $css.Rule
 // `path` must be an `os.Path` object targeting a directory.
 loadFont: macro(path)
 	$ Table.append(global.fontsToLoad, path)
+end
+
+let scopeCount = 0
+
+// Intended to be used inside a Scope element instead of Rule.
+ScopeRule: macro(selectors, ...rules)
+	@css.Rule
+		- @Table.join(sep:\,\s)
+			for selector in selectors.split(sep: ",")
+				- &$selector\, & $selector
+			end
+		end
+		...rules
+	end
+end
+
+// Apply a set of rule to the given element. Dont affect html structure
+Scope: macro(content, rules:)
+	if rules
+		set scopeCount += 1
+		@Style
+			@css.Rule(.pages--scope-$scopeCount)
+				if type(rules) == "table"
+					$ css.css(...rules)
+				else
+					$rules
+				end
+			end
+		end
+		
+		$html.Span($empty, class: pages--scope-begin, dataScope: $scopeCount)
+		$content
+		$html.Span($empty, class: pages--scope-end, dataScope: $scopeCount)
+	end
 end

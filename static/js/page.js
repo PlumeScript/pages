@@ -132,7 +132,17 @@ function makePages() {
   const body = document.body.cloneNode(true);
   document.body.innerHTML = ''
 
-  Array.from(body.childNodes).forEach(node => {
+  // Keep the source attached (hidden): a detached subtree does not match
+  // document stylesheets in Chromium, so the computed-style lookups in
+  // breakValue would miss user-declared break-* rules.
+  const source = document.createElement('div');
+  source.style.cssText = 'position: absolute; visibility: hidden; top: 0; left: 0;';
+  document.body.appendChild(source);
+  while (body.firstChild) {
+    source.appendChild(body.firstChild);
+  }
+
+  Array.from(source.childNodes).forEach(node => {
     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
       var wrapper = document.createElement('div');
       node.parentNode.insertBefore(wrapper, node);
@@ -140,15 +150,16 @@ function makePages() {
     }
   });
 
-  const configs = collectHeaderFooter(body);
+  const configs = collectHeaderFooter(source);
 
   let pageIndex = 0;
-  while (body.firstChild) {
+  while (source.firstChild) {
     var currentPage = createPage(document.body)
     const content = layoutPage(currentPage, configs, pageIndex)
-    insertElements(body, content, configs)
+    insertElements(source, content, configs)
     pageIndex++
   }
+  source.remove();
 
   // excludeLast: the last page is only known once pagination ends. Remove the
   // header/footer slot from it (the content keeps its height — whitespace below).

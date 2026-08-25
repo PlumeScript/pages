@@ -18,5 +18,15 @@ Licensed under the MIT License — see LICENSE for details.
 	.pages--page:last-child {
 		break-after: auto;
 	}
+
+	/* The pagination JS has already consumed every content-level break into
+	   the logical page layout. Neutralize the content breaks here, or the
+	   print engine re-breaks inside the fixed-height page divs and fragments
+	   them (empty pages + stacked content). */
+	.pages--content,
+	.pages--content * {
+		break-before: auto !important;
+		break-after: auto !important;
+	}
 }
 

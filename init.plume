@@ -45,6 +45,9 @@ end
 Style: macro(content)
 	$ Table.append(global.styleToAppend, content)
 end
+Script: macro(...args)
+	$ Table.append(global.scriptToAppend, html.Script(...args))
+end
 
 Rule: $Rule
 
@@ -126,6 +129,9 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 						$cleanImported($script.read())
 					end
 				end
+			end
+			for script in global.scriptToAppend
+				$script
 			end
 		end
 	end

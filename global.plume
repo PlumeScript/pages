@@ -5,3 +5,4 @@ documentAuthor: $empty
 fontsToLoad: $Table()
 tocContent: $Table()
 styleToAppend: $Table()
+scriptToAppend: $Table()

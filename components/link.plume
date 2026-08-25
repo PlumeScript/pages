@@ -5,6 +5,8 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
+use #rawNumbers
+
 let html = $import(html)
 
 link: macro(text, target)

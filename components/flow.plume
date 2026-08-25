@@ -5,6 +5,8 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
+use #rawNumbers
+
 let html = $import(html)
 
 hline: $html.Hr(class: pages--flow--hline)
@@ -17,3 +19,16 @@ glue: $html.Div($empty, class: pages--flow--glue)
 
 pageNumber: $html.Span(, class:pages--to-eval--pagenumber)
 whitePage: $newpage$html.Div(,)$newpage
+
+Align: macro(content, ?center, ?left, ?right)
+	if center and left or center and right or left and right
+		raise Cannot use two align flags together.
+	elseif not center and not left and not right
+		raise Muse give at least one align flag.
+	end
+
+	let flag = $(center and "center" or right and "right" or left and "left")
+	@html.Div(class: pages--flow--align pages--flow--align-$flag)
+		$content
+	end
+end

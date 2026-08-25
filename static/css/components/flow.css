@@ -24,3 +24,40 @@ Licensed under the MIT License — see LICENSE for details.
 	break-before: avoid;
 	break-after: avoid;
 }
+
+.pages--flow--align {
+	display: flex;
+	flex-direction: column;
+}
+
+.pages--flow--align-center {
+	align-items: center;
+}
+.pages--flow--align-left {
+	align-items: flex-start;
+}
+.pages--flow--align-right {
+	align-items: flex-end;
+}
+
+.pages--flow--align-top {
+	justify-content: flex-start;
+}
+.pages--flow--align-middle {
+	justify-content: center;
+}
+.pages--flow--align-bottom {
+	justify-content: flex-end;
+}
+
+.pages--table--cell:has(>.pages--flow--align--cell-trick) {
+	&:has(.pages--flow--align-top) {
+		vertical-align: top;
+	}
+	&:has(.pages--flow--align-middle) {
+		vertical-align: middle;
+	}
+	&:has(.pages--flow--align-bottom) {
+		vertical-align: bottom;
+	}
+}

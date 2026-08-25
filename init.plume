@@ -1,5 +1,5 @@
 /*
-Pages 0.4.0 - A Plume🪶 document generator
+Pages 0.5.0 - A Plume🪶 document generator
 
 Copyright © 2026-2026 Erwan Barbedor
 
@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+use #rawNumbers
 
 let html = $import(html)
 let var, Rule from $import(css)
@@ -36,15 +37,41 @@ end
 
 pagesContext: $context
 
-// `path` must be an `os.Path` object targeting a directory.
-loadFont: macro(path)
-	$ Table.append(global.fontsToLoad, path)
+// Called at document start
+ref makeStyle: macro(pageFormat:, ?landscape)
+	@html.Style
+		for path in global.fontsToLoad
+			$ loadFont(path)
+		end
+		if pageFormat
+			@Rule(:root)
+				...initPageFormat($pageFormat, landscape: $landscape)
+
+				$var(pageMarginTop):    30mm
+				$var(pageMarginBottom): 30mm
+				$var(pageMarginLeft):   30mm
+				$var(pageMarginRight):  30mm
+				$var(pageMarginGutter): 10mm
+			end
+		end
+		
+		for stylesheet in os.Path("./static/css").walk()
+			if stylesheet.isFile() and (pageFormat or not String(stylesheet).find("/page/"))
+				$cleanImported($stylesheet.read())
+			end
+		end
+
+		for style in global.styleToAppend
+			$style
+		end
+	end
 end
 
 // Pagination: auto, enable, disable, x, x-y
 // Gutter: auto, enable, disable
 Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape)
 	if filename
+		set filename = $ String(filename)
 		if not filename.find("%.html^", ?rich)
 			set filename = $filename\0.html
 		end
@@ -68,28 +95,9 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 				if title
 					$html.Title($title)
 				end
-				@html.Style
-					for path in global.fontsToLoad
-						$ loadFont(path)
-					end
-					@Rule(:root)
-						...initPageFormat($pageFormat, landscape: $landscape)
+				$makeStyle(pageFormat: $pageFormat, landscape: $landscape)
 
-						$var(pageMarginTop):    30mm
-						$var(pageMarginBottom): 30mm
-						$var(pageMarginLeft):   30mm
-						$var(pageMarginRight):  30mm
-						$var(pageMarginGutter): 10mm
-					end
-					
-					for stylesheet in os.Path("./static/css").walk()
-						if stylesheet.isFile()
-							$cleanImported($stylesheet.read())
-						end
-					end
-				end
-
-				$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js, ?defer)
+				$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax\@4/tex-mml-svg.js, ?defer)
 			end
 
 			@html.Body
@@ -101,11 +109,15 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 
 			@html.Script
 				\0let paginationConfig = "$pagination";\n
+				\0let localeConfig     = "$plume.locale()";\n
 				for script in os.Path("./static/js").walk()
 					if script.isFile()
 						$cleanImported($script.read())
 					end
 				end
+			end
+			for script in global.scriptToAppend
+				$script
 			end
 		end
 	end

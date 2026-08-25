@@ -1,3 +1,5 @@
+use #rawNumbers
+
 use html, css
 use .
 
@@ -18,7 +20,7 @@ macro formatLine(line)
 	return $line
 end
 
-let version = v0.4.0
+let version = v0.5.0
 
 @Document(filename: ./doc/doc, title: Plume Pages Documentation, pagination: 3)
     @Style
@@ -67,24 +69,25 @@ let version = v0.4.0
 			Runs of inline content are auto-wrapped in paragraphs. You can force a par-break with $code(\$newpar), and force a newline - without par-break - with $code(\$newline).
 
 		$section(Numbering Format)
-			Numbering format of titles and lists recognizes a few special characters:
+			Numbering format of titles and lists recognizes a few special escapes:
             $glue
 			@List(marker: arrow)
-				- $code(1) for decimal
-				- $code(a) and $code(A) for lowercase/uppercase letters.
-				- $code(i) and $code(I) for lowercase/uppercase roman numerals.
-				- $code(*) to render the parent level.
+				- $code(%1) for decimal
+				- $code(%a) and $code(%A) for lowercase/uppercase letters.
+				- $code(%i) and $code(%I) for lowercase/uppercase roman numerals.
+				- $code(%*) to render the parent level.
+                - $code(%p) for literal $code(%).
 			end
 			@italic
-				Note\: $code(*) is forbidden at level 1 ($code(\$heading(...\, level: 1)) and $code(\$chapter(...)))
+				Note\: $code(%*) is forbidden at level 1 ($code(\$heading(...\, level: 1)) and $code(\$chapter(...)))
 			end
             $newpar
 
-			$bold(Example)\: if the parent is rendered as $code(II>c) and the pattern for the sub level is $code(*>1), 3rd child will be numbered as $code(II>c>3).
+			$bold(Example)\: if the parent is rendered as $code(II>c) and the pattern for the sub level is $code(%*>%1), 3rd child will be numbered as $code(II>c>3).
 			
 			$newpar$glue
 			
-			The default values are set by the contextual variables $code(formatNumbering1 to formatNumbering6).
+			The default values are set by the contextual variables $code(formatNumbering1) to $code(formatNumbering6).
 
 	$chapter(Components)
     $chapter(List of exposed variables)

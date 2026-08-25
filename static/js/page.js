@@ -207,6 +207,7 @@ function autoParagraph(container) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  makeScopes(document.body);
   // Paragraphs are built before MathJax typesets, so a formula script (with
   // .pages--as-inline) is wrapped in its <p> before MathJax replaces it.
   autoParagraph(document.body);

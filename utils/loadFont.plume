@@ -5,6 +5,8 @@ Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
 
+use #rawNumbers
+
 let base64 = $import(./base64)
 let global = $import(../global)
 
@@ -56,7 +58,7 @@ macro(path)
 				end
 			end
 
-			\0@font-face {
+			\@font-face {
 				font-family: "$fontName";
 				src\: url(data:$MIME;base64,$base64($elem)) format("$FORMAT");\n
 				font-weight:

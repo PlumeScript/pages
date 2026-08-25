@@ -4,6 +4,9 @@ This file is part of Pages - A Plume🪶 document generator
 Copyright © Erwan Barbedor
 Licensed under the MIT License — see LICENSE for details.
 */
+
+use #rawNumbers
+
 let context = $import(../context)
 
 macro intToLatin(n)
@@ -75,13 +78,15 @@ ref applyFormatNumbering: macro (level, format, tracker)
 	let count = $level
 	
 	while true
-		let current  = $format.find([aiAI1*][^aiAI1*]-\$, ?rich)
+		let current  = $format.find(%%[aiAI1p*][^%%]-\$, ?rich)
+
 		if not current
 			set result = $format$result
 			break
 		end
-		let action   = $current.sub(1)
-		let leftover = $current.sub(2, -1)
+		
+		let action   = $current.sub(2)
+		let leftover = $current.sub(3, -1)
 
 		set result = $leftover$result
 		if action == "*"
@@ -90,6 +95,8 @@ ref applyFormatNumbering: macro (level, format, tracker)
 			end
 			
 			set result = $applyFormatNumbering($count, $empty, $tracker)$result
+		elseif action == "p"
+			set result = %$result
 		else
 			set result = $formatNumber($action, $tracker[count])$result
 		end

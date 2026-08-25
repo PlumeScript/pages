@@ -9,6 +9,7 @@ use #rawNumbers
 
 let html    = $import(html)
 let context = $import(../context)
+let global = $import(../global)
 
 // Rendering a math formula
 // `processor` could be `tex` *(for `LaTeX` syntax)* or `ascii` *(for `asciimath` syntax)*. If empty, use contextual variable `formulaProcessor`.
@@ -29,6 +30,52 @@ formula: macro(content, processor:, ?display, ?inlineDisplay)
 			type: math/$processor$((display or inlineDisplay) and " ;mode=display")
 			class: pages--as-inline
 			- $content
+		end
+	end
+end
+
+let fontList = do
+	- mathjax-newcm
+	- mathjax-asana
+	- mathjax-bonum
+	- mathjax-dejavu
+	- mathjax-fira
+	- mathjax-modern
+	- mathjax-pagella
+	- mathjax-schola
+	- mathjax-stix2
+	- mathjax-termes
+	- mathjax-tex
+end
+
+let extensionFontList = do
+	- mathjax-euler
+	- mathjax-bbm
+	- mathjax-bboldx
+	- mathjax-dsfont
+end
+
+// Change mathjax font for the whole document
+setMathFont: macro(name)
+	if not Table.find(fontList, name)
+		@plume.warning Unknown font "$name".
+	end
+	@Table.append($global.scriptToAppend)
+		@html.Script
+			MathJax.output = MathJax.output || {};\n
+			MathJax.output.font = "$name";
+		end
+	end
+end
+
+setMathFontExtension: macro(name)
+	if not Table.find(extensionFontList, name)
+		@plume.warning Unknown font extension "$name".
+	end
+	@Table.append($global.scriptToAppend)
+		@html.Script
+			MathJax.output = MathJax.output || {};\n
+			MathJax.output.fontExtensions = ["$name"];
 		end
 	end
 end

@@ -82,6 +82,7 @@ end
 // Gutter: auto, enable, disable
 Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape)
 	if filename
+		set filename = $ String(filename)
 		if not filename.find("%.html^", ?rich)
 			set filename = $filename\0.html
 		end
@@ -130,7 +131,6 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 	end
 
 	if filename
-		run $ print(String(os.Path(filename)))
 		run $ os.Path(filename).write(result)
 	end
 	

@@ -86,7 +86,7 @@ Table: macro(?zebra, ...rows)
 						let t = do
 							meta fragment: macro()
 								@html.Td
-									class: pages--table--cell)
+									class: pages--table--cell
 									rowspan: $infos.count
 									- @html.Div(class: $getTdHorizontalAlign($i) $getTdVerticalAlign($j))
 										$infos.content

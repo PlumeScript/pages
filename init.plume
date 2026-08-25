@@ -130,6 +130,7 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 	end
 
 	if filename
+		run $ print(String(os.Path(filename)))
 		run $ os.Path(filename).write(result)
 	end
 	

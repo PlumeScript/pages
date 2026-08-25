@@ -13,10 +13,22 @@ let context = $import(../context)
 // Rendering a math formula
 // `processor` could be `tex` *(for `LaTeX` syntax)* or `ascii` *(for `asciimath` syntax)*. If empty, use contextual variable `formulaProcessor`.
 // `?display` renders it as a block.
-formula: macro(content, processor:, ?display)
+formula: macro(content, processor:, ?display, ?inlineDisplay)
 	set processor = $ processor or context.formulaProcessor()
 	if processor != "tex" and processor != "ascii"
 		raise Unsuported processor `$processor`.
 	end
-	$html.Script($content, type: math/$processor$(display and " ;mode=display"), class: pages--as-inline)
+
+	@html.Span
+		class: do
+			- pages--math
+			$("pages--math-display"): $(display or inlineDisplay)
+			$("pages--math-display--inline"): $inlineDisplay
+		end
+		- @html.Script
+			type: math/$processor$((display or inlineDisplay) and " ;mode=display")
+			class: pages--as-inline
+			- $content
+		end
+	end
 end

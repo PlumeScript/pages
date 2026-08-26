@@ -14,6 +14,7 @@ let applyFormatNumbering from $import(../utils/counterLabel)
 let numberTracking = (0, 0, 0, 0, 0, 0)
 let lastRef
 
+applyFormatNumbering: $applyFormatNumbering
 // Set the numbering counter of a heading level.
 headingSetCounter: macro(level, Number value)
 	if value<=0

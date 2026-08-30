@@ -27,7 +27,7 @@ end
 let scopeCount = 0
 
 // Intended to be used inside a Scope element instead of Rule.
-ScopeRule: macro(selectors, ...rules)
+ref ScopeRule: macro(selectors, ...rules)
 	@css.Rule
 		- @Table.join(sep:\,\s)
 			for selector in selectors.split(sep: ",")
@@ -39,9 +39,13 @@ ScopeRule: macro(selectors, ...rules)
 end
 
 // Apply a set of rule to the given element. Dont affect html structure
-Scope: macro(content, rules:)
+ref Scope: macro(content, rules:, selector:, ...attrs)
+	set scopeCount += 1
 	if rules
-		set scopeCount += 1
+		if selector
+			raise "selector" it isn't compatible with "rules".
+		end
+
 		@Style
 			@css.Rule(.pages--scope-$scopeCount)
 				if type(rules) == "table"
@@ -51,9 +55,20 @@ Scope: macro(content, rules:)
 				end
 			end
 		end
+	elseif selector
+		@Style
+			@css.Rule(.pages--scope-$scopeCount)
+				@css.Rule($selector)
+					$ css.css(...attrs)
+				end
+			end
+		end
 		
-		$html.Span($empty, class: pages--scope-begin, dataScope: $scopeCount)
-		$content
-		$html.Span($empty, class: pages--scope-end, dataScope: $scopeCount)
+	else
+		raise You must provide at leat "rules" or "selector".
 	end
+
+	$html.Span($empty, class: pages--scope-begin, dataScope: $scopeCount)
+	$content
+	$html.Span($empty, class: pages--scope-end, dataScope: $scopeCount)
 end

@@ -41,7 +41,7 @@ hspace: macro(...args)
 		class: pages--flow--hspace
 		style: do
 			display: inline-block
-			width: calc($(args[1]? or 1) * var(--space-1x))
+			marginLeft: calc($(args[1]? or 1) * var(--space-1x))
 		end
 	end
 end
@@ -53,7 +53,7 @@ vspace: macro(...args)
 	@html.Div($empty)
 		class: pages--flow--vspace
 		style: do
-			height: calc($(args[1]? or 1) * var(--space-1x))
+			marginTop: calc($(args[1]? or 1) * var(--space-1x))
 		end
 	end
 end

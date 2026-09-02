@@ -27,7 +27,7 @@ formula: macro(content, processor:, ?display, ?inlineDisplay)
 			$("pages--math-display--inline"): $inlineDisplay
 		end
 		- @html.Script
-			type: math/$processor$((display or inlineDisplay) and " ;mode=display")
+			type: math/$processor$((display or inlineDisplay) and " ;mode=display" or "")
 			class: pages--as-inline
 
 			if plume.locale() == "fr"

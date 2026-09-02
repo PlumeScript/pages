@@ -113,3 +113,9 @@ subsubsection: macro(...args)
 	set args.level = 4
 	$heading(...args)
 end
+
+// Internal — called by Document/clean
+titleClean: macro()
+	set numberTracking = (0, 0, 0, 0, 0, 0)
+	set lastRef = $empty
+end

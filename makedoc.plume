@@ -56,7 +56,16 @@ let version = v0.6.0
 			$bold(Usage)\: $code(Document $plume.doc($Document).signature)$newpar
 			is the main entry point of your document.$newpar
 			
-			Provide $code(filename) to automatically save output without using $code(plume -o).
+			Provide $code(filename) to automatically save output without using $code(plume -o).$newpar
+			$newpar
+			The state produced by the content (title, author, loaded fonts, appended styles and scripts, table of contents, numbering counters) is shared between the documents of the same process. It is automatically reset at the end of every $code(Document), so consecutive documents do not leak into each other. See $code(clean) to reset it manually.
+		
+		$section(clean)
+			The macro $code(clean)$newpar
+			$bold(Usage)\: $code($plume.doc($clean).signature)$newpar
+			Resets all the shared document state: global title and author, loaded fonts, appended styles and scripts, table of contents, numbering counters, last heading reference and scope counter.$newpar
+			It is called automatically at the end of every $code(Document), so consecutive documents start from a pristine state.$newpar
+			Call it manually between two documents when the shared state was manipulated outside of a $code(Document) call, after an error that left the state dirty, or in a generation loop.
 		
 		$section(Paginations)
 			Rendering splits the body into fixed-size pages that match the page format (size and margins).

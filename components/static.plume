@@ -72,3 +72,8 @@ ref Scope: macro(content, rules:, selector:, ...attrs)
 	$content
 	$html.Span($empty, class: pages--scope-end, dataScope: $scopeCount)
 end
+
+// Internal — called by Document/clean
+staticClean: macro()
+	set scopeCount = 0
+end

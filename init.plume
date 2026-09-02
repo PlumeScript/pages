@@ -30,12 +30,31 @@ let context = $import(./context)
 let cleanImported = $import(./utils/cleanImported)
 let loadFont = $import(./utils/loadFont)
 let global = $import(./global)
+let title = $import(./components/title)
+let list = $import(./components/list)
+let static = $import(./components/static)
 
 for component in os.Path("./components").walk()
 	...import($String($component).replace(.plume, $("")))
 end
 
 pagesContext: $context
+
+// Reset all shared document state (global title/author, fonts, styles,
+// scripts, table of contents, title/list/static counters).
+// Called automatically at the end of every Document. Call it manually
+// between documents when the state was manipulated outside of a Document call.
+ref clean: macro()
+	set global.documentTitle = $empty
+	set global.documentAuthor = $empty
+	set global.fontsToLoad = $Table()
+	set global.tocContent = $Table()
+	set global.styleToAppend = $Table()
+	set global.scriptToAppend = $Table()
+	run $title.titleClean()
+	run $list.listClean()
+	run $static.staticClean()
+end
 
 // Called at document start
 ref makeStyle: macro(pageFormat:, ?landscape)
@@ -125,6 +144,8 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 	if filename
 		run $ os.Path(filename).write(result)
 	end
-	
+
+	run $clean()
+
 	return $result
 end

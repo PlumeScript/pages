@@ -222,6 +222,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // Paragraphs are built before MathJax typesets, so a formula script (with
   // .pages--as-inline) is wrapped in its <p> before MathJax replaces it.
   autoParagraph(document.body);
+  // Glue every last word to its closing punctuation (no-break space) so it
+  // can never be stranded alone at the start of a line. Runs before makePages
+  // so the overflow measurements see the final wrapping.
+  noOrphanPunct(document.body);
   const finish = () => {
     makePages();
     applyPagination();

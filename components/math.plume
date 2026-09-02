@@ -29,6 +29,42 @@ formula: macro(content, processor:, ?display, ?inlineDisplay)
 		- @html.Script
 			type: math/$processor$((display or inlineDisplay) and " ;mode=display")
 			class: pages--as-inline
+
+			if plume.locale() == "fr"
+				let rpl = if processor == "ascii"
+					\\\s
+				else
+					~
+				end
+				// A trailing space gives a non-digit tail to a run ending the
+				// formula; both math processors ignore trailing whitespace.
+				set content = $content\s
+				// Drop inert spaces already between digits: the built-in fr number
+				// formatting uses plain spaces, and both processors ignore them.
+				while content.find("([0-9])%s+([0-9])", ?rich)
+					set content = $content.replace(([0-9])%s+([0-9]), %1%2,?rich)
+				end
+				// Split fraction digits (right after a decimal comma) into singles
+				// so the grouping below cannot touch them.
+				while content.find(",([0-9])([0-9])", ?rich) or content.find("([0-9]) ([0-9])([0-9])", ?rich)
+					if content.find(",([0-9])([0-9])", ?rich)
+						set content = $content.replace(\,([0-9])([0-9]), \,%1 %2,?rich)
+					else
+						set content = $content.replace(([0-9]) ([0-9])([0-9]), %1 %2 %3,?rich)
+					end
+				end
+				// Group runs of 4+ digits by threes, right-anchored: the leftmost
+				// window of 4 adjacent digits followed by a non-digit is the run's
+				// tail, so each pass inserts the separator before the last three.
+				while content.find("[0-9][0-9][0-9][0-9]", ?rich)
+					set content = $content.replace(([0-9])([0-9])([0-9])([0-9])%s*([^0-9]), %1$rpl%2%3%4%5,?rich)
+				end
+				// Rejoin the split fraction digits.
+				while content.find("([0-9]) ([0-9])", ?rich)
+					set content = $content.replace(([0-9]) ([0-9]), %1%2,?rich)
+				end
+			end
+
 			- $content
 		end
 	end

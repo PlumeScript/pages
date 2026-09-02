@@ -36,6 +36,10 @@ formula: macro(content, processor:, ?display, ?inlineDisplay)
 				else
 					~
 				end
+				// To get correct decimal separator
+				if type(content) == "number"
+					set content = $content.localize()
+				end
 				// A trailing space gives a non-digit tail to a run ending the
 				// formula; both math processors ignore trailing whitespace.
 				set content = $content\s

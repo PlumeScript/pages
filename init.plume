@@ -103,7 +103,8 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 		run $Table.append($global.fontsToLoad, $os.Path(./static/fonts/FiraCode))
 	end
 
-	let result = do
+	// Force fragments before reset
+	let result = @String
 		@html.Html(lang: $(lang or plume.locale() or "en"))
 			@html.Head
 				$html.Meta(charset: UTF-8, ?noClose)

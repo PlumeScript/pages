@@ -28,4 +28,20 @@ Licensed under the MIT License — see LICENSE for details.
 
 		margin-inline: auto;
 	}
+
+	body.pages--web {
+		background: white;
+		margin: auto;
+		width: 80ch;
+		.pages--page {
+			box-shadow: unset;
+			width: 100%;
+			height: auto;
+			padding: 0 !important;
+
+			.pages--header, .pages--footer, .pages--toc--dots, .pages--toc--pages {
+				display: none;
+			}
+		}
+	}
 }

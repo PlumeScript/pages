@@ -6,8 +6,10 @@ Licensed under the MIT License — see LICENSE for details.
 */
 
 @media print {
+	/* Booklet: the sheet (two pages) is the printed page; otherwise the
+	   content page is. Undefined sheet vars fall back to the page size. */
 	@page {
-		size: var(--page-width) var(--page-height);
+		size: var(--sheet-width, var(--page-width)) var(--sheet-height, var(--page-height));
 		margin: 0;
 	}
 
@@ -16,6 +18,18 @@ Licensed under the MIT License — see LICENSE for details.
 	}
 
 	.pages--page:last-child {
+		break-after: auto;
+	}
+
+	body.pages--imposeBooklet .pages--page {
+		break-after: auto;
+	}
+
+	body.pages--imposeBooklet .pages--sheet {
+		break-after: page;
+	}
+
+	body.pages--imposeBooklet .pages--sheet:last-child {
 		break-after: auto;
 	}
 

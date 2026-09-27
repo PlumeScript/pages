@@ -28,6 +28,41 @@ Licensed under the MIT License — see LICENSE for details.
 	
 }
 
+/* Booklet: one physical sheet side, two pages laid along the fold axis. */
+.pages--sheet {
+	display: flex;
+	flex-direction: row;
+
+	width:  var(--sheet-width);
+	height: var(--sheet-height);
+}
+
+.pages--sheet--column {
+	flex-direction: column;
+}
+
+/* Gutter on the fold side of both halves (replaces the even/odd rule,
+   which no longer applies once pages are grouped two per sheet). */
+.pages--gutter .pages--sheet {
+	.pages--page:first-child {
+		padding-right: calc(var(--page-margin-right) + var(--page-margin-gutter));
+	}
+	.pages--page:last-child {
+		padding-left: calc(var(--page-margin-left) + var(--page-margin-gutter));
+	}
+}
+
+.pages--gutter .pages--sheet--column {
+	.pages--page:first-child {
+		padding-right: var(--page-margin-right);
+		padding-bottom: calc(var(--page-margin-bottom) + var(--page-margin-gutter));
+	}
+	.pages--page:last-child {
+		padding-left: var(--page-margin-left);
+		padding-top: calc(var(--page-margin-top) + var(--page-margin-gutter));
+	}
+}
+
 .pages--header,
 .pages--footer {
 	flex: 0 0 auto;

@@ -8,7 +8,7 @@ use #rawNumbers
 
 let var from $import(css)
 
-macro(String pageFormat, ?landscape)
+macro(String pageFormat, ?landscape, ?imposeBooklet)
 	let w,  h
 
 	if pageFormat.sub(1, 1) == "A"
@@ -30,4 +30,16 @@ macro(String pageFormat, ?landscape)
 
 	$var(pageWidth):  $w\0mm
 	$var(pageHeight): $h\0mm
+
+	if imposeBooklet
+		// Sheet: two pages laid along the fold axis
+		let sw, sh
+		if w>h
+			set sw, sh = ($w, $(2*h))
+		else
+			set sw, sh = ($(2*w), $h)
+		end
+		$var(sheetWidth):  $sw\0mm
+		$var(sheetHeight): $sh\0mm
+	end
 end

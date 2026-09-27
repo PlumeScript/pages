@@ -74,6 +74,15 @@ let version = v0.6.0
 			$newpar
 			You can force a page-break with $code(\$newpage) and prevent two elements from being separated by using $code(\$glue) between them.
 
+		$section(Booklet)
+			Pass the $code(imposeBooklet) flag to $code(Document) to lay the document out for booklet printing: two $code(pageFormat) pages per sheet side, side by side for portrait pages, stacked for landscape ones, on a sheet equal to the page format doubled along the fold axis (e.g. A5 pages on A4 sheets).$newpar
+			$newpar
+				 The sheet size is derived from $code(pageFormat). The page count is padded with unnumbered blank pages to a multiple of 4, and the $code(gutter) is added on the fold side of both halves of each sheet.$newpar
+			$newpar
+			Sheet sides are produced in print order, the cover sheet being the last page: print double-sided with short-edge flip, then fold the stack. Verify the order with a 4-page test document first — if page 1 is not the cover after folding, reverse the printed stack (or the printer duplex option).$newpar
+			$newpar
+			The screen preview shows the sheets in print order, so the cover appears as the last sheet on screen, not the first.
+
 		$section(Paragraphs)
 			Runs of inline content are auto-wrapped in paragraphs. You can force a par-break with $code(\$newpar), and force a newline - without par-break - with $code(\$newline).
 

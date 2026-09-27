@@ -29,6 +29,25 @@ Licensed under the MIT License — see LICENSE for details.
 		margin-inline: auto;
 	}
 
+	/* Booklet: the sheet carries the preview chrome, the inner pages are bare. */
+	body.pages--imposeBooklet {
+		.pages--sheet {
+			background: white;
+
+			margin-bottom: var(--preview-page-margin-bottom);
+			border-radius: var(--preview-page-border-radius);
+			box-shadow:    var(--preview-page-shadow);
+
+			margin-inline: auto;
+		}
+
+		.pages--sheet .pages--page {
+			box-shadow: unset;
+			border-radius: 0;
+			margin: 0;
+		}
+	}
+
 	body.pages--web {
 		background: white;
 		margin: auto;

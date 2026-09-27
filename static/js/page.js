@@ -177,6 +177,62 @@ function makePages() {
   }
 }
 
+function emptyPage() {
+  let result = document.createElement('div')
+  result.className = 'pages--page';
+  return result;
+}
+
+// Booklet imposition: regroup the paginated pages into physical sheet sides,
+// two pages per side, in print order. Runs after applyPagination so page
+// numbers are assigned in reading order and travel with their pages.
+// Layout (standard booklet, matching the 4-page zine [4|1] / [2|3]): the top
+// (cover) sheet is printed last — recto [n | 1], verso [2 | 3] — and the
+// sheet at depth d (1-based from the inside) holds recto [4d+3 | 4d+2] and
+// verso [4d | 4d+1] (1-based page numbers).
+function imposeBooklet() {
+  const body = document.body;
+  if (!body.classList.contains('pages--imposeBooklet')) return;
+
+  // A physical sheet holds four pages; pad with trailing blank pages
+  // (added after numbering, so they carry none).
+  const pad = (4 - body.querySelectorAll('.pages--page').length % 4) % 4;
+  for (let i = 0; i < pad; i++) body.appendChild(createPage(body));
+  const pages = Array.from(body.querySelectorAll('.pages--page'));
+
+  // Pages are side by side (row) for portrait content, stacked (column)
+  // for landscape content.
+  const column = pages[0].clientWidth > pages[0].clientHeight;
+  const addSheet = pair => {
+    const sheet = document.createElement('div');
+    sheet.className = column ? 'pages--sheet pages--sheet--column' : 'pages--sheet';
+    sheet.appendChild(pages[pair[0]] || emptyPage());
+    sheet.appendChild(pages[pair[1]] || emptyPage());
+    body.appendChild(sheet);
+    
+  };
+
+  // const n = pages.length;
+  // for (let d = 1; d < n / 4; d++) {
+  //   addSheet([4 * d + 2, 4 * d + 1]); // recto of the sheet at depth d
+  //   addSheet([4 * d - 1, 4 * d]);     // verso
+  // }
+  // addSheet([n - 1, 0]); // recto of the top (cover) sheet
+  // addSheet([1, 2]);     // verso
+
+  const n = pages.length;
+  while (n % 4 != 0)
+    n++;
+
+  console.log("start", n)
+  for (let d = 0; d < n / 4; d++) {
+    addSheet([n-2*d-1, 2*d]);
+    addSheet([2*d+1, n-2*d-2]);
+
+    console.log(2*d+1,   n-2*d, 2*d+2, n-2*d-1)
+  }
+}
+
 // Wrap runs of inline content in <p> within each flow container (body and
 // .pages--to-flow elements), recursing into nested flow containers. Block
 // elements break the paragraph; .pages--flow--par is a paragraph break and is
@@ -229,6 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const finish = () => {
     makePages();
     applyPagination();
+    imposeBooklet();
     window.__pagesReadyResolve();
   };
   if (window.MathJax && window.MathJax.startup && hasMath) {

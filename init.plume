@@ -57,14 +57,17 @@ ref clean: macro()
 end
 
 // Called at document start
-ref makeStyle: macro(pageFormat:, ?landscape)
+ref makeStyle: macro(pageFormat:, ?landscape, ?imposeBooklet)
+	if imposeBooklet and not pageFormat
+		raise imposeBooklet requires a pageFormat
+	end
 	@html.Style
 		for path in global.fontsToLoad
 			$ loadFont(path)
 		end
 		if pageFormat
 			@Rule(:root)
-				...initPageFormat($pageFormat, landscape: $landscape)
+				...initPageFormat($pageFormat, landscape: $landscape, imposeBooklet: $imposeBooklet)
 
 				$var(pageMarginTop):    30mm
 				$var(pageMarginBottom): 30mm
@@ -88,7 +91,7 @@ end
 
 // Pagination: auto, enable, disable, x, x-y
 // Gutter: auto, enable, disable
-Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape, ?web)
+Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape, ?web, ?imposeBooklet)
 	if filename
 		set filename = $ String(filename)
 		if not filename.find("%.html^", ?rich)
@@ -115,7 +118,7 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 				if title
 					$html.Title($title)
 				end
-				$makeStyle(pageFormat: $pageFormat, landscape: $landscape)
+				$makeStyle(pageFormat: $pageFormat, landscape: $landscape, imposeBooklet: $imposeBooklet)
 
 				$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax\@4/tex-mml-svg.js, ?defer)
 			end
@@ -124,6 +127,7 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 				class: do
 					$("pages--gutter"): $ gutter == "enable" or gutter == "auto" and pagination != "disable"
 					$("pages--web"): $ web
+					$("pages--imposeBooklet"): $ imposeBooklet
 				end
 				- $content
 			end

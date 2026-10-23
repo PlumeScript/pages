@@ -81,7 +81,7 @@ EqnAlign: macro(?boxLast, ...lines)
 		inlineDisplay: $lines.inlineDisplay?
 	end
 
-	let eqpos  = $Table
+	let eqpos  = $Table()
 	let maxeqlen = -1
 	let maxlen = 0
 	for line in lines
@@ -101,8 +101,10 @@ EqnAlign: macro(?boxLast, ...lines)
 	@html.Table(class: pages--math--eqnalign)
 		for i, line in enumerate(lines)
 			@html.Tr
+				let eqndelta = 0
 				if maxeqlen != -1
-					for j in seq(maxeqlen - eqpos[i])
+					set eqndelta = $ maxeqlen - eqpos[i]
+					for j in seq(eqndelta)
 						$html.Td($empty)
 					end
 				end
@@ -111,9 +113,10 @@ EqnAlign: macro(?boxLast, ...lines)
 						$formula($elem, ...formulaArgs)
 					end
 				end
-				for j in seq(maxlen - len(line))
+				for j in seq(maxlen - len(line) - eqndelta)
 					$html.Td($empty)
 				end
+				// $html.Td($i-$eqpos[i]-$lines[i][eqpos[i]])
 			end
 		end
 	end

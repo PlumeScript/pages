@@ -14,7 +14,7 @@ let global = $import(../global)
 // Rendering a math formula
 // `processor` could be `tex` *(for `LaTeX` syntax)* or `ascii` *(for `asciimath` syntax)*. If empty, use contextual variable `formulaProcessor`.
 // `?display` renders it as a block.
-formula: macro(content, processor:, ?display, ?inlineDisplay)
+ref formula: macro(content, processor:, ?display, ?inlineDisplay)
 	set processor = $ processor or context.formulaProcessor()
 	if processor != "tex" and processor != "ascii"
 		raise Unsuported processor `$processor`.
@@ -70,6 +70,51 @@ formula: macro(content, processor:, ?display, ?inlineDisplay)
 			end
 
 			- $content
+		end
+	end
+end
+
+EqnAlign: macro(?boxLast, ...lines)
+	let formulaArgs = do
+		processor: $lines.processor?
+		display: $lines.display?
+		inlineDisplay: $lines.inlineDisplay?
+	end
+
+	let eqpos  = $Table
+	let maxeqlen = -1
+	let maxlen = 0
+	for line in lines
+		let pos = -1
+		for i, elem in enumerate(line)
+			if elem == "="
+				set pos = $i
+				break
+			end
+		end
+		run $ Table.append(eqpos, pos)
+
+		set maxeqlen = $ max(maxeqlen, pos)
+		set maxlen = $ max(maxlen, len(line))
+	end
+
+	@html.Table(class: pages--math--eqnalign)
+		for i, line in enumerate(lines)
+			@html.Tr
+				if maxeqlen != -1
+					for j in seq(maxeqlen - eqpos[i])
+						$html.Td($empty)
+					end
+				end
+				for elem in line
+					@html.Td(class: $(boxLast and i == len(lines) and "pages--math--eqnalign-boxLast"))
+						$formula($elem, ...formulaArgs)
+					end
+				end
+				for j in seq(maxlen - len(line))
+					$html.Td($empty)
+				end
+			end
 		end
 	end
 end

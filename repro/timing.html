@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js" defer></script>
+</head><body>
+<script>
+window.MathJax = { loader: { load: ['input/asciimath'] } };
+</script>
+<div id="m"><script type="math/ascii">4</script></div>
+<script>
+window.__r = [];
+const t0 = performance.now();
+const log = m => window.__r.push(Math.round(performance.now()-t0) + " " + m);
+document.addEventListener("DOMContentLoaded", () => {
+  const mj = window.MathJax;
+  log("DOMCL: MathJax=" + (typeof mj) + " startup=" + !!(mj && mj.startup) + " promise=" + !!(mj && mj.startup && mj.startup.promise && typeof mj.startup.promise.then === "function") + " isConfigStartup=" + !!(mj && mj.startup && typeof mj.startup.ready === "function" && !mj.startup.promise));
+});
+window.addEventListener("load", () => log("load: promise=" + !!(window.MathJax && window.MathJax.startup && window.MathJax.startup.promise)));
+</script>
+</body></html>

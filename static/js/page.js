@@ -161,20 +161,10 @@ function makePages() {
   }
   source.remove();
 
-  // excludeLast: the last page is only known once pagination ends. Remove the
-  // header/footer slot from it (the content keeps its height — whitespace below).
-  const pages = document.body.querySelectorAll('.pages--page');
-  const last = pages[pages.length - 1];
-  if (last) {
-    if (configs.header.some(c => c.excludeLast)) {
-      const header = last.querySelector('.pages--header');
-      if (header) header.remove();
-    }
-    if (configs.footer.some(c => c.excludeLast)) {
-      const footer = last.querySelector('.pages--footer');
-      if (footer) footer.remove();
-    }
-  }
+  // excludeLast is applied by the caller (applyExcludeLast), after the
+  // overflow audit — the audit may add a page, and the exclusion must hit the
+  // final last page.
+  return configs;
 }
 
 function emptyPage() {
@@ -273,6 +263,92 @@ function autoParagraph(container) {
   container.replaceChildren(fragment);
 }
 
+// MathJax typesets asynchronously. Paginating before the initial typeset
+// measures the math placeholders (shorter than the final SVG), so the
+// trailing element of a page overflows the content slot and gets clipped by
+// the page's bottom margin — it must be pushed to the next page instead.
+//
+// The MathJax script is `defer`: by DOMContentLoaded it has either run or
+// failed. If it ran, window.MathJax.startup.promise exists (the bundle
+// creates it synchronously) and resolves when the initial typeset is done —
+// wait for it. If it failed, there is no promise: window.MathJax is still
+// the inline config from mathjax.js, whose `startup` key is a plain object
+// with no `promise` — reading `.then` on it used to throw and leave the
+// document unpaginated forever. Nothing will ever typeset in that case, so
+// paginate immediately (the math stays as empty placeholders).
+// NB: this reasoning relies on `defer`. If the script ever becomes `async`,
+// it can still be pending at DOMContentLoaded and a poll + cap is needed.
+function mathjaxPromise() {
+  const mj = window.MathJax;
+  const p = mj && mj.startup && mj.startup.promise;
+  return p && typeof p.then === 'function' ? p : null;
+}
+
+function whenMathJaxDone() {
+  if (!hasMath) return Promise.resolve('no-math');
+  const p = mathjaxPromise();
+  if (p) return p.then(() => 'typeset', () => 'mathjax-error');
+  return Promise.resolve('no-mathjax');
+}
+
+// Make the last page's excludeLast exclusion explicit: its header/footer
+// zones (if the config excludes them) are removed here, once the page count
+// is final — after the overflow audit, which may add a page.
+function applyExcludeLast(configs) {
+  const pages = document.body.querySelectorAll('.pages--page');
+  const last = pages[pages.length - 1];
+  if (!last) return;
+  if (configs.header.some(c => c.excludeLast)) {
+    const header = last.querySelector('.pages--header');
+    if (header) header.remove();
+  }
+  if (configs.footer.some(c => c.excludeLast)) {
+    const footer = last.querySelector('.pages--footer');
+    if (footer) footer.remove();
+  }
+}
+
+// Safety net for heights that change AFTER pagination (a late re-typeset, a
+// font swap, ...): an element whose box no longer fits in the content slot
+// is clipped by the page's bottom margin. Push the overflowing trailing
+// elements to the next page instead (creating one if there is none), so the
+// final layout never clips content. The overflow is measured on border-boxes:
+// a trailing margin past the slot is whitespace, not content, and stays put.
+function fixOverflowingPages(configs) {
+  let movedAny = false;
+  for (;;) {
+    const pages = Array.from(document.body.querySelectorAll('.pages--page'));
+    let moved = false;
+    for (let i = 0; i < pages.length && !moved; i++) {
+      const content = pages[i].querySelector('.pages--content');
+      if (!content) continue;
+      const slotTop = content.getBoundingClientRect().top;
+      // Movable = its box no longer fits in the slot AND it can fit alone on
+      // a fresh page (an element taller than the whole slot fits nowhere:
+      // moving it would only shift the overflow and loop forever).
+      const overflowed = Array.from(content.children).filter(k => {
+        const r = k.getBoundingClientRect();
+        return r.bottom - slotTop > content.clientHeight + 0.5
+          && r.height <= content.clientHeight;
+      });
+      if (overflowed.length === 0) continue;
+      let next = pages[i + 1];
+      if (!next) {
+        next = createPage(document.body);
+        layoutPage(next, configs, pages.length);
+      }
+      const nextContent = next.querySelector('.pages--content');
+      // Prepend: in document order these elements belong at the TOP of the
+      // next page, before its own content (which follows them in the flow).
+      overflowed.forEach(k => nextContent.insertBefore(k, nextContent.firstChild));
+      moved = true;
+    }
+    if (!moved) break;
+    movedAny = true;
+  }
+  return movedAny;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   makeScopes(document.body);
   // Paragraphs are built before MathJax typesets, so a formula script (with
@@ -282,17 +358,20 @@ document.addEventListener('DOMContentLoaded', function () {
   // can never be stranded alone at the start of a line. Runs before makePages
   // so the overflow measurements see the final wrapping.
   noOrphanPunct(document.body);
-  const finish = () => {
-    makePages();
+  whenMathJaxDone().then(() => {
+    const configs = makePages();
+    fixOverflowingPages(configs);
+    applyExcludeLast(configs);
     applyPagination();
+    // Page numbers change the footer content: the footer can grow by a
+    // pixel, shrinking the content slot and clipping a trailing element.
+    // Re-audit; if pages changed, the exclusion and the numbers must follow.
+    let pass = 0;
+    while (fixOverflowingPages(configs) && pass++ < 5) {
+      applyExcludeLast(configs);
+      applyPagination();
+    }
     imposeBooklet();
     window.__pagesReadyResolve();
-  };
-  if (window.MathJax && window.MathJax.startup && hasMath) {
-    // Resolves once MathJax has finished typesetting; .catch paginates anyway
-    // if MathJax fails (CDN down, render error).
-    window.MathJax.startup.promise.then(finish).catch(finish);
-  } else {
-    finish();
-  }
+  }).catch(() => window.__pagesReadyResolve());
 });

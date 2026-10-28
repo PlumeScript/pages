@@ -24,3 +24,7 @@ end
 striped: macro(content)
 	$html.Span($content, class: pages--text--striped)
 end
+
+box: macro(content)
+	$html.Span($content, class: pages--text--boxed)
+end

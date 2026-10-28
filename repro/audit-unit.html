@@ -1,0 +1,444 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root { --page-width: 800px; --page-height: 1000px;
+  --page-margin-top: 50px; --page-margin-bottom: 50px;
+  --page-margin-left: 50px; --page-margin-right: 50px; --page-margin-gutter: 0px; }
+.pages--page { width: var(--page-width); height: var(--page-height);
+  padding: var(--page-margin-top) var(--page-margin-right) var(--page-margin-bottom) var(--page-margin-left);
+  display: flex; flex-direction: column; }
+.pages--content { flex: 1 1 auto; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.blk { background: #ddd; }
+</style></head><body>
+<div id="out"></div>
+<script>
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+// Header/footer support. The Plume macros emit one hidden `--pages-to-insert`
+// div per non-empty zone, carrying the zone (header/footer), the position
+// (left/center/right) and the exclude flags. `collectHeaderFooter` reads them
+// and removes them from the body before pagination; `layoutPage` builds the
+// header/content/footer slots of a page and clones the source content into
+// them. The content slot is where pagination fills the flow, so the header and
+// footer heights are accounted for.
+
+// Read the `--pages-to-insert` divs, group them by zone, and remove them from
+// the body so pagination never treats them as content.
+function collectHeaderFooter(body) {
+  const configs = { header: [], footer: [] };
+  Array.from(body.querySelectorAll('.pages--to-insert')).forEach(div => {
+    const zone = div.getAttribute('zone');
+    const position = div.getAttribute('position');
+    div.remove();
+    if (zone !== 'header' && zone !== 'footer') return;
+    if (position !== 'left' && position !== 'center' && position !== 'right' && position !== 'side') return;
+    configs[zone].push({
+      position,
+      content: Array.from(div.childNodes),
+      excludeFirst: div.hasAttribute('exclude-first'),
+      excludeLast: div.hasAttribute('exclude-last'),
+    });
+  });
+  return configs;
+}
+
+// Build the header/content/footer slots of a page. The header and footer are
+// created only when a zone has content and is not excluded for this page.
+// Returns the content slot (where pagination fills the flow).
+function layoutPage(page, configs, pageIndex) {
+  const content = document.createElement('div');
+  content.className = 'pages--content';
+
+  if (configs.header.length > 0 && !(pageIndex === 0 && configs.header.some(c => c.excludeFirst))) {
+    page.appendChild(buildZone('header', configs.header));
+  }
+  page.appendChild(content);
+  if (configs.footer.length > 0 && !(pageIndex === 0 && configs.footer.some(c => c.excludeFirst))) {
+    page.appendChild(buildZone('footer', configs.footer));
+  }
+  return content;
+}
+
+// Create a header/footer slot with the three position divs, cloning the source
+// content into the positions that have it. Empty positions stay empty (zero
+// width) so `justify-content: space-between` lays out any subset correctly.
+function buildZone(zone, configs) {
+  const slot = document.createElement('div');
+  slot.className = 'pages--' + zone;
+  ['left', 'center', 'right', 'side'].forEach(position => {
+    const cfg = configs.find(c => c.position === position);
+    const pos = document.createElement('div');
+    pos.className = 'pages--' + zone + '-' + position;
+    if (cfg) {
+      cfg.content.forEach(node => pos.appendChild(node.cloneNode(true)));
+    }
+    slot.appendChild(pos);
+  });
+  return slot;
+}
+/*
+This file is part of Pages - A Plume🪶 document generator
+
+Copyright © Erwan Barbedor
+Licensed under the MIT License — see LICENSE for details.
+*/
+
+// Captured during parsing, before MathJax (defer) consumes the math scripts.
+const hasMath = !!document.querySelector('script[type^="math/"]');
+
+window.__pagesReady = new Promise((resolve) => {
+  window.__pagesReadyResolve = resolve;
+});
+
+function createPage(parent) {
+  var page = document.createElement('div');
+  page.className = 'pages--page';
+  
+  parent.appendChild(page)
+
+  return page;
+}
+
+function elOverflow(parent, child) {
+  // Save state
+  const originalOverflow = parent.style.overflow;
+
+  // For using scrollHeight
+  parent.style.overflow = 'hidden';
+
+  child = child.cloneNode(true)
+  parent.appendChild(child);
+
+  const overflow = parent.clientHeight - parent.scrollHeight;
+  
+  // restore
+  parent.removeChild(child);
+  parent.style.overflow = originalOverflow;
+
+  return overflow
+}
+
+// Does a set of elements fit on a fresh, empty page? Fallback for
+// keep-with-next: if the tied run + the overflowing element can't fit together
+// on a new page, there is no solution and we break anyway (avoid is a hint).
+// Measures against the content slot so the header/footer heights are counted.
+function fitsOnEmptyPage(elements, configs) {
+  const page = createPage(document.body);
+  page.style.overflow = 'hidden';
+  const content = layoutPage(page, configs, 1); // middle page: header/footer present
+  content.style.overflow = 'hidden';
+  elements.forEach(el => content.appendChild(el.cloneNode(true)));
+  const fits = content.clientHeight - content.scrollHeight >= 0;
+  document.body.removeChild(page);
+  return fits;
+}
+
+// Read a break property. Inline style is reliable even on detached elements
+// (the $newpage marker); computed style covers stylesheet rules.
+function breakValue(el, prop) {
+  return el.style[prop] || getComputedStyle(el)[prop];
+}
+
+// Is a break forbidden between a and b? Yes when a has break-after: avoid or b
+// has break-before: avoid (keep-with-next / keep-with-previous).
+function isTied(a, b) {
+  return breakValue(a, 'breakAfter') === 'avoid' || breakValue(b, 'breakBefore') === 'avoid';
+}
+
+// Maximal trailing run of dest's children that must stay with `next`: every
+// consecutive pair (including the boundary with `next`) is tied.
+function avoidRun(dest, next) {
+  const children = Array.from(dest.children);
+  const run = [];
+  for (let i = children.length - 1; i >= 0; i--) {
+    const a = children[i];
+    const b = (i === children.length - 1) ? next : children[i + 1];
+    if (isTied(a, b)) {
+      run.unshift(a);
+    } else {
+      break;
+    }
+  }
+  return run;
+}
+
+function insertElements(source, dest, configs) {
+  while (source.firstChild) {
+    const el = source.firstChild;
+
+    // break-before: page — start a new page.
+    if (breakValue(el, 'breakBefore') === 'page') {
+      // Only break if the current page already has content; otherwise we're at
+      // a page start and returning would loop forever on an empty page.
+      if (dest.childElementCount > 0) {
+        return;
+      }
+      // At a page start, a pure marker (empty div, e.g. $newpage) is dropped;
+      // real content falls through and is placed below.
+      if (el.childElementCount === 0 && el.textContent.trim() === '') {
+        source.removeChild(el);
+        continue;
+      }
+    }
+
+    if (elOverflow(dest, el) < 0 && dest.childElementCount > 0) {
+      // Keep-with-next: if the trailing elements are tied to el, move them to
+      // the next page so they stay with el — unless they can't fit together on
+      // a fresh page (no solution → break here anyway).
+      const run = avoidRun(dest, el);
+      if (run.length > 0 && fitsOnEmptyPage(run.concat([el]), configs)) {
+        // Insert before a stable reference: source.firstChild changes on each
+        // insert, which would reverse the run.
+        const first = source.firstChild;
+        run.forEach(n => source.insertBefore(n, first));
+      }
+      return;
+    }
+
+    dest.appendChild(el);
+
+    // break-after: page — break after this element.
+    if (breakValue(el, 'breakAfter') === 'page') {
+      return;
+    }
+  }
+}
+
+function makePages() {
+  if (document.body.querySelector('.pages--page')) return;
+
+  const body = document.body.cloneNode(true);
+  document.body.innerHTML = ''
+
+  // Keep the source attached (hidden): a detached subtree does not match
+  // document stylesheets in Chromium, so the computed-style lookups in
+  // breakValue would miss user-declared break-* rules.
+  const source = document.createElement('div');
+  source.style.cssText = 'position: absolute; visibility: hidden; top: 0; left: 0;';
+  document.body.appendChild(source);
+  while (body.firstChild) {
+    source.appendChild(body.firstChild);
+  }
+
+  Array.from(source.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
+      var wrapper = document.createElement('div');
+      node.parentNode.insertBefore(wrapper, node);
+      wrapper.appendChild(node);
+    }
+  });
+
+  const configs = collectHeaderFooter(source);
+
+  let pageIndex = 0;
+  while (source.firstChild) {
+    var currentPage = createPage(document.body)
+    const content = layoutPage(currentPage, configs, pageIndex)
+    insertElements(source, content, configs)
+    pageIndex++
+  }
+  source.remove();
+
+  // excludeLast is applied by the caller (applyExcludeLast), after the
+  // overflow audit — the audit may add a page, and the exclusion must hit the
+  // final last page.
+  return configs;
+}
+
+function emptyPage() {
+  let result = document.createElement('div')
+  result.className = 'pages--page';
+  return result;
+}
+
+// Booklet imposition: regroup the paginated pages into physical sheet sides,
+// two pages per side, in print order. Runs after applyPagination so page
+// numbers are assigned in reading order and travel with their pages.
+// Layout (standard booklet, matching the 4-page zine [4|1] / [2|3]): the top
+// (cover) sheet is printed last — recto [n | 1], verso [2 | 3] — and the
+// sheet at depth d (1-based from the inside) holds recto [4d+3 | 4d+2] and
+// verso [4d | 4d+1] (1-based page numbers).
+function imposeBooklet() {
+  const body = document.body;
+  if (!body.classList.contains('pages--imposeBooklet')) return;
+
+  // A physical sheet holds four pages; pad with trailing blank pages
+  // (added after numbering, so they carry none).
+  const pad = (4 - body.querySelectorAll('.pages--page').length % 4) % 4;
+  for (let i = 0; i < pad; i++) body.appendChild(createPage(body));
+  const pages = Array.from(body.querySelectorAll('.pages--page'));
+
+  // Pages are side by side (row) for portrait content, stacked (column)
+  // for landscape content.
+  const column = pages[0].clientWidth > pages[0].clientHeight;
+  const addSheet = pair => {
+    const sheet = document.createElement('div');
+    sheet.className = column ? 'pages--sheet pages--sheet--column' : 'pages--sheet';
+    sheet.appendChild(pages[pair[0]] || emptyPage());
+    sheet.appendChild(pages[pair[1]] || emptyPage());
+    body.appendChild(sheet);
+    
+  };
+
+  // const n = pages.length;
+  // for (let d = 1; d < n / 4; d++) {
+  //   addSheet([4 * d + 2, 4 * d + 1]); // recto of the sheet at depth d
+  //   addSheet([4 * d - 1, 4 * d]);     // verso
+  // }
+  // addSheet([n - 1, 0]); // recto of the top (cover) sheet
+  // addSheet([1, 2]);     // verso
+
+  const n = pages.length;
+  while (n % 4 != 0)
+    n++;
+
+  console.log("start", n)
+  for (let d = 0; d < n / 4; d++) {
+    addSheet([n-2*d-1, 2*d]);
+    addSheet([2*d+1, n-2*d-2]);
+
+    console.log(2*d+1,   n-2*d, 2*d+2, n-2*d-1)
+  }
+}
+
+// Wrap runs of inline content in <p> within each flow container (body and
+// .pages--to-flow elements), recursing into nested flow containers. Block
+// elements break the paragraph; .pages--flow--par is a paragraph break and is
+// dropped. .pages--as-inline elements are treated as inline (part of the
+// paragraph) even if they render as block. Runs before pagination so pages are
+// built from proper blocks.
+function autoParagraph(container) {
+  const fragment = document.createDocumentFragment();
+  let pending = [];
+
+  const flush = () => {
+    if (pending.length === 0) return;
+    const p = document.createElement('p');
+    pending.forEach(n => p.appendChild(n));
+    fragment.appendChild(p);
+    pending = [];
+  };
+
+  Array.from(container.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.textContent.trim() === '') {
+        if (pending.length > 0) pending.push(node);
+      } else {
+        pending.push(node);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      if (getComputedStyle(node).display.startsWith('inline') || node.classList.contains('pages--as-inline')) {
+        pending.push(node);
+      } else {
+        flush();
+        if (node.classList.contains('pages--flow--par')) return;
+        if (node.classList.contains('pages--to-flow')) autoParagraph(node);
+        fragment.appendChild(node);
+      }
+    }
+  });
+  flush();
+  container.replaceChildren(fragment);
+}
+
+// MathJax typesets asynchronously. Paginating before the initial typeset
+// measures the math placeholders (shorter than the final SVG), so the
+// trailing element of a page overflows the content slot and gets clipped by
+// the page's bottom margin — it must be pushed to the next page instead.
+//
+// The MathJax script is `defer`: by DOMContentLoaded it has either run or
+// failed. If it ran, window.MathJax.startup.promise exists (the bundle
+// creates it synchronously) and resolves when the initial typeset is done —
+// wait for it. If it failed, there is no promise: window.MathJax is still
+// the inline config from mathjax.js, whose `startup` key is a plain object
+// with no `promise` — reading `.then` on it used to throw and leave the
+// document unpaginated forever. Nothing will ever typeset in that case, so
+// paginate immediately (the math stays as empty placeholders).
+// NB: this reasoning relies on `defer`. If the script ever becomes `async`,
+// it can still be pending at DOMContentLoaded and a poll + cap is needed.
+function mathjaxPromise() {
+  const mj = window.MathJax;
+  const p = mj && mj.startup && mj.startup.promise;
+  return p && typeof p.then === 'function' ? p : null;
+}
+
+function whenMathJaxDone() {
+  if (!hasMath) return Promise.resolve('no-math');
+  const p = mathjaxPromise();
+  if (p) return p.then(() => 'typeset', () => 'mathjax-error');
+  return Promise.resolve('no-mathjax');
+}
+
+// Make the last page's excludeLast exclusion explicit: its header/footer
+// zones (if the config excludes them) are removed here, once the page count
+// is final — after the overflow audit, which may add a page.
+function applyExcludeLast(configs) {
+  const pages = document.body.querySelectorAll('.pages--page');
+  const last = pages[pages.length - 1];
+  if (!last) return;
+  if (configs.header.some(c => c.excludeLast)) {
+    const header = last.querySelector('.pages--header');
+    if (header) header.remove();
+  }
+  if (configs.footer.some(c => c.excludeLast)) {
+    const footer = last.querySelector('.pages--footer');
+    if (footer) footer.remove();
+  }
+}
+
+// Safety net for heights that change AFTER pagination (a late re-typeset, a
+// font swap, ...): an element whose box no longer fits in the content slot
+// is clipped by the page's bottom margin. Push the overflowing trailing
+// elements to the next page instead (creating one if there is none), so the
+// final layout never clips content. The overflow is measured on border-boxes:
+// a trailing margin past the slot is whitespace, not content, and stays put.
+function fixOverflowingPages(configs) {
+  let movedAny = false;
+  for (;;) {
+    const pages = Array.from(document.body.querySelectorAll('.pages--page'));
+    let moved = false;
+    for (let i = 0; i < pages.length && !moved; i++) {
+      const content = pages[i].querySelector('.pages--content');
+      if (!content) continue;
+      const slotTop = content.getBoundingClientRect().top;
+      // Movable = its box no longer fits in the slot AND it can fit alone on
+      // a fresh page (an element taller than the whole slot fits nowhere:
+      // moving it would only shift the overflow and loop forever).
+      const overflowed = Array.from(content.children).filter(k => {
+        const r = k.getBoundingClientRect();
+        return r.bottom - slotTop > content.clientHeight + 0.5
+          && r.height <= content.clientHeight;
+      });
+      if (overflowed.length === 0) continue;
+      let next = pages[i + 1];
+      if (!next) {
+        next = createPage(document.body);
+        layoutPage(next, configs, pages.length);
+      }
+      const nextContent = next.querySelector('.pages--content');
+      // Prepend: in document order these elements belong at the TOP of the
+      // next page, before its own content (which follows them in the flow).
+      overflowed.forEach(k => nextContent.insertBefore(k, nextContent.firstChild));
+      moved = true;
+    }
+    if (!moved) break;
+    movedAny = true;
+  }
+  return movedAny;
+}
+
+
+window.__setup = function () {
+  const mk = (children) => {
+    const page = createPage(document.body);
+    layoutPage(page, { header: [], footer: [] }, 1);
+    const c = page.querySelector('.pages--content');
+    children.forEach(ch => c.appendChild(ch));
+    return page;
+  };
+  return mk;
+};
+</script></body></html>

@@ -7,7 +7,9 @@ Licensed under the MIT License — see LICENSE for details.
 .pages--list {
   display: grid;
   gap: 0;
-  margin-bottom: var(--space-2x);
+  &:not(:last-child) {
+    margin-bottom: var(--space-2x);
+  }
 }
 
 .pages--list--item {

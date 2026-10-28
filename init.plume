@@ -1,5 +1,5 @@
 /*
-Pages 0.5.0 - A Plume🪶 document generator
+Pages 0.6.0 - A Plume🪶 document generator
 
 Copyright © 2026-2026 Erwan Barbedor
 
@@ -30,6 +30,9 @@ let context = $import(./context)
 let cleanImported = $import(./utils/cleanImported)
 let loadFont = $import(./utils/loadFont)
 let global = $import(./global)
+let title = $import(./components/title)
+let list = $import(./components/list)
+let static = $import(./components/static)
 
 for component in os.Path("./components").walk()
 	...import($String($component).replace(.plume, $("")))
@@ -37,15 +40,34 @@ end
 
 pagesContext: $context
 
+// Reset all shared document state (global title/author, fonts, styles,
+// scripts, table of contents, title/list/static counters).
+// Called automatically at the end of every Document. Call it manually
+// between documents when the state was manipulated outside of a Document call.
+ref clean: macro()
+	set global.documentTitle = $empty
+	set global.documentAuthor = $empty
+	set global.fontsToLoad = $Table()
+	set global.tocContent = $Table()
+	set global.styleToAppend = $Table()
+	set global.scriptToAppend = $Table()
+	run $title.titleClean()
+	run $list.listClean()
+	run $static.staticClean()
+end
+
 // Called at document start
-ref makeStyle: macro(pageFormat:, ?landscape)
+ref makeStyle: macro(pageFormat:, ?landscape, ?imposeBooklet)
+	if imposeBooklet and not pageFormat
+		raise imposeBooklet requires a pageFormat
+	end
 	@html.Style
 		for path in global.fontsToLoad
 			$ loadFont(path)
 		end
 		if pageFormat
 			@Rule(:root)
-				...initPageFormat($pageFormat, landscape: $landscape)
+				...initPageFormat($pageFormat, landscape: $landscape, imposeBooklet: $imposeBooklet)
 
 				$var(pageMarginTop):    30mm
 				$var(pageMarginBottom): 30mm
@@ -69,7 +91,7 @@ end
 
 // Pagination: auto, enable, disable, x, x-y
 // Gutter: auto, enable, disable
-Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape)
+Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: auto, gutter: auto, ?landscape, ?web, ?imposeBooklet)
 	if filename
 		set filename = $ String(filename)
 		if not filename.find("%.html^", ?rich)
@@ -84,7 +106,8 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 		run $Table.append($global.fontsToLoad, $os.Path(./static/fonts/FiraCode))
 	end
 
-	let result = do
+	// Force fragments before reset
+	let result = @String
 		@html.Html(lang: $(lang or plume.locale() or "en"))
 			@html.Head
 				$html.Meta(charset: UTF-8, ?noClose)
@@ -95,14 +118,16 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 				if title
 					$html.Title($title)
 				end
-				$makeStyle(pageFormat: $pageFormat, landscape: $landscape)
+				$makeStyle(pageFormat: $pageFormat, landscape: $landscape, imposeBooklet: $imposeBooklet)
 
 				$html.Script($empty, src: https:/\/cdn.jsdelivr.net/npm/mathjax\@4/tex-mml-svg.js, ?defer)
 			end
 
 			@html.Body
-				if gutter == "enable" or gutter == "auto" and pagination != "disable"
-					class: pages--gutter
+				class: do
+					$("pages--gutter"): $ gutter == "enable" or gutter == "auto" and pagination != "disable"
+					$("pages--web"): $ web
+					$("pages--imposeBooklet"): $ imposeBooklet
 				end
 				- $content
 			end
@@ -125,6 +150,8 @@ Document: macro(content, filename:, title:, pageFormat: A4, lang:, pagination: a
 	if filename
 		run $ os.Path(filename).write(result)
 	end
-	
+
+	run $clean()
+
 	return $result
 end

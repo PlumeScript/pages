@@ -14,7 +14,7 @@ let global = $import(../global)
 // Rendering a math formula
 // `processor` could be `tex` *(for `LaTeX` syntax)* or `ascii` *(for `asciimath` syntax)*. If empty, use contextual variable `formulaProcessor`.
 // `?display` renders it as a block.
-formula: macro(content, processor:, ?display, ?inlineDisplay)
+ref formula: macro(content, processor:, ?display, ?inlineDisplay)
 	set processor = $ processor or context.formulaProcessor()
 	if processor != "tex" and processor != "ascii"
 		raise Unsuported processor `$processor`.
@@ -27,9 +27,97 @@ formula: macro(content, processor:, ?display, ?inlineDisplay)
 			$("pages--math-display--inline"): $inlineDisplay
 		end
 		- @html.Script
-			type: math/$processor$((display or inlineDisplay) and " ;mode=display")
+			type: math/$processor$((display or inlineDisplay) and " ;mode=display" or "")
 			class: pages--as-inline
+
+			if plume.locale() == "fr"
+				let rpl = if processor == "ascii"
+					\\\s
+				else
+					~
+				end
+				// To get correct decimal separator
+				if type(content) == "number"
+					set content = $content.localize()
+				end
+				// A trailing space gives a non-digit tail to a run ending the
+				// formula; both math processors ignore trailing whitespace.
+				set content = $content\s
+				// Drop inert spaces already between digits: the built-in fr number
+				// formatting uses plain spaces, and both processors ignore them.
+				while content.find("([0-9])%s+([0-9])", ?rich)
+					set content = $content.replace(([0-9])%s+([0-9]), %1%2,?rich)
+				end
+				// Split fraction digits (right after a decimal comma) into singles
+				// so the grouping below cannot touch them.
+				while content.find(",([0-9])([0-9])", ?rich) or content.find("([0-9]) ([0-9])([0-9])", ?rich)
+					if content.find(",([0-9])([0-9])", ?rich)
+						set content = $content.replace(\,([0-9])([0-9]), \,%1 %2,?rich)
+					else
+						set content = $content.replace(([0-9]) ([0-9])([0-9]), %1 %2 %3,?rich)
+					end
+				end
+				// Group runs of 4+ digits by threes, right-anchored: the leftmost
+				// window of 4 adjacent digits followed by a non-digit is the run's
+				// tail, so each pass inserts the separator before the last three.
+				while content.find("[0-9][0-9][0-9][0-9]", ?rich)
+					set content = $content.replace(([0-9])([0-9])([0-9])([0-9])%s*([^0-9]), %1$rpl%2%3%4%5,?rich)
+				end
+				// Rejoin the split fraction digits.
+				while content.find("([0-9]) ([0-9])", ?rich)
+					set content = $content.replace(([0-9]) ([0-9]), %1%2,?rich)
+				end
+			end
+
 			- $content
+		end
+	end
+end
+
+EqnAlign: macro(?boxLast, ...lines)
+	let formulaArgs = do
+		processor: $lines.processor?
+		display: $lines.display?
+		inlineDisplay: $lines.inlineDisplay?
+	end
+
+	let eqpos  = $Table()
+	let maxeqlen = -1
+	let maxlen = 0
+	for line in lines
+		let pos = -1
+		for i, elem in enumerate(line)
+			if elem == "="
+				set pos = $i
+				break
+			end
+		end
+		run $ Table.append(eqpos, pos)
+
+		set maxeqlen = $ max(maxeqlen, pos)
+		set maxlen = $ max(maxlen, len(line))
+	end
+
+	@html.Table(class: pages--math--eqnalign)
+		for i, line in enumerate(lines)
+			@html.Tr
+				let eqndelta = 0
+				if maxeqlen != -1
+					set eqndelta = $ maxeqlen - eqpos[i]
+					for j in seq(eqndelta)
+						$html.Td($empty)
+					end
+				end
+				for elem in line
+					@html.Td(class: $(boxLast and i == len(lines) and "pages--math--eqnalign-boxLast"))
+						$formula($elem, ...formulaArgs)
+					end
+				end
+				for j in seq(maxlen - len(line) - eqndelta)
+					$html.Td($empty)
+				end
+				// $html.Td($i-$eqpos[i]-$lines[i][eqpos[i]])
+			end
 		end
 	end
 end

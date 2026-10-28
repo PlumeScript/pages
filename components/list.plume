@@ -89,3 +89,9 @@ ref List: macro(Number indent: 4, Number columns: 1, Number gap: 0, marker:,...i
 		end
 	end
 end
+
+// Internal — called by Document/clean
+listClean: macro()
+	set numberTracking = (0, 0, 0, 0, 0, 0)
+	set listDeep = 0
+end

@@ -12,3 +12,24 @@ Licensed under the MIT License — see LICENSE for details.
 .pages--math-display--inline {
 	display: inline-block;
 }
+
+.pages--math--eqnalign {
+	margin: auto;
+	text-align: center;
+	border-collapse: collapse;
+}
+
+.pages--math--eqnalign td{
+	padding: var(--space-xs);
+}
+
+.pages--math--eqnalign-boxLast {
+	border: 1px solid black;
+
+	& ~ .pages--math--eqnalign-boxLast {
+		border-left: none;
+	}
+	&:has(~ .pages--math--eqnalign-boxLast) {
+		border-right: none;
+	}
+}

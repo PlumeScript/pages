@@ -63,6 +63,9 @@ function applyPagination() {
       const content = page.querySelector('.pages--content');
       page.insertBefore(footer, content ? content.nextSibling : null);
     }
+    // Idempotency: the overflow audit may re-run this after moving elements
+    // (a renumbered page) — drop the previous number instead of stacking.
+    page.querySelectorAll('.pages--page-number').forEach(el => el.remove());
     const span = document.createElement('span');
     span.className = 'pages--page-number';
     span.textContent = String(pageNumber);

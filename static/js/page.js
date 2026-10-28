@@ -132,7 +132,17 @@ function makePages() {
   const body = document.body.cloneNode(true);
   document.body.innerHTML = ''
 
-  Array.from(body.childNodes).forEach(node => {
+  // Keep the source attached (hidden): a detached subtree does not match
+  // document stylesheets in Chromium, so the computed-style lookups in
+  // breakValue would miss user-declared break-* rules.
+  const source = document.createElement('div');
+  source.style.cssText = 'position: absolute; visibility: hidden; top: 0; left: 0;';
+  document.body.appendChild(source);
+  while (body.firstChild) {
+    source.appendChild(body.firstChild);
+  }
+
+  Array.from(source.childNodes).forEach(node => {
     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
       var wrapper = document.createElement('div');
       node.parentNode.insertBefore(wrapper, node);
@@ -140,29 +150,76 @@ function makePages() {
     }
   });
 
-  const configs = collectHeaderFooter(body);
+  const configs = collectHeaderFooter(source);
 
   let pageIndex = 0;
-  while (body.firstChild) {
+  while (source.firstChild) {
     var currentPage = createPage(document.body)
     const content = layoutPage(currentPage, configs, pageIndex)
-    insertElements(body, content, configs)
+    insertElements(source, content, configs)
     pageIndex++
   }
+  source.remove();
 
-  // excludeLast: the last page is only known once pagination ends. Remove the
-  // header/footer slot from it (the content keeps its height — whitespace below).
-  const pages = document.body.querySelectorAll('.pages--page');
-  const last = pages[pages.length - 1];
-  if (last) {
-    if (configs.header.some(c => c.excludeLast)) {
-      const header = last.querySelector('.pages--header');
-      if (header) header.remove();
-    }
-    if (configs.footer.some(c => c.excludeLast)) {
-      const footer = last.querySelector('.pages--footer');
-      if (footer) footer.remove();
-    }
+  // excludeLast is applied by the caller (applyExcludeLast), after the
+  // overflow audit — the audit may add a page, and the exclusion must hit the
+  // final last page.
+  return configs;
+}
+
+function emptyPage() {
+  let result = document.createElement('div')
+  result.className = 'pages--page';
+  return result;
+}
+
+// Booklet imposition: regroup the paginated pages into physical sheet sides,
+// two pages per side, in print order. Runs after applyPagination so page
+// numbers are assigned in reading order and travel with their pages.
+// Layout (standard booklet, matching the 4-page zine [4|1] / [2|3]): the top
+// (cover) sheet is printed last — recto [n | 1], verso [2 | 3] — and the
+// sheet at depth d (1-based from the inside) holds recto [4d+3 | 4d+2] and
+// verso [4d | 4d+1] (1-based page numbers).
+function imposeBooklet() {
+  const body = document.body;
+  if (!body.classList.contains('pages--imposeBooklet')) return;
+
+  // A physical sheet holds four pages; pad with trailing blank pages
+  // (added after numbering, so they carry none).
+  const pad = (4 - body.querySelectorAll('.pages--page').length % 4) % 4;
+  for (let i = 0; i < pad; i++) body.appendChild(createPage(body));
+  const pages = Array.from(body.querySelectorAll('.pages--page'));
+
+  // Pages are side by side (row) for portrait content, stacked (column)
+  // for landscape content.
+  const column = pages[0].clientWidth > pages[0].clientHeight;
+  const addSheet = pair => {
+    const sheet = document.createElement('div');
+    sheet.className = column ? 'pages--sheet pages--sheet--column' : 'pages--sheet';
+    sheet.appendChild(pages[pair[0]] || emptyPage());
+    sheet.appendChild(pages[pair[1]] || emptyPage());
+    body.appendChild(sheet);
+    
+  };
+
+  // const n = pages.length;
+  // for (let d = 1; d < n / 4; d++) {
+  //   addSheet([4 * d + 2, 4 * d + 1]); // recto of the sheet at depth d
+  //   addSheet([4 * d - 1, 4 * d]);     // verso
+  // }
+  // addSheet([n - 1, 0]); // recto of the top (cover) sheet
+  // addSheet([1, 2]);     // verso
+
+  const n = pages.length;
+  while (n % 4 != 0)
+    n++;
+
+  console.log("start", n)
+  for (let d = 0; d < n / 4; d++) {
+    addSheet([n-2*d-1, 2*d]);
+    addSheet([2*d+1, n-2*d-2]);
+
+    console.log(2*d+1,   n-2*d, 2*d+2, n-2*d-1)
   }
 }
 
@@ -206,21 +263,115 @@ function autoParagraph(container) {
   container.replaceChildren(fragment);
 }
 
+// MathJax typesets asynchronously. Paginating before the initial typeset
+// measures the math placeholders (shorter than the final SVG), so the
+// trailing element of a page overflows the content slot and gets clipped by
+// the page's bottom margin — it must be pushed to the next page instead.
+//
+// The MathJax script is `defer`: by DOMContentLoaded it has either run or
+// failed. If it ran, window.MathJax.startup.promise exists (the bundle
+// creates it synchronously) and resolves when the initial typeset is done —
+// wait for it. If it failed, there is no promise: window.MathJax is still
+// the inline config from mathjax.js, whose `startup` key is a plain object
+// with no `promise` — reading `.then` on it used to throw and leave the
+// document unpaginated forever. Nothing will ever typeset in that case, so
+// paginate immediately (the math stays as empty placeholders).
+// NB: this reasoning relies on `defer`. If the script ever becomes `async`,
+// it can still be pending at DOMContentLoaded and a poll + cap is needed.
+function mathjaxPromise() {
+  const mj = window.MathJax;
+  const p = mj && mj.startup && mj.startup.promise;
+  return p && typeof p.then === 'function' ? p : null;
+}
+
+function whenMathJaxDone() {
+  if (!hasMath) return Promise.resolve('no-math');
+  const p = mathjaxPromise();
+  if (p) return p.then(() => 'typeset', () => 'mathjax-error');
+  return Promise.resolve('no-mathjax');
+}
+
+// Make the last page's excludeLast exclusion explicit: its header/footer
+// zones (if the config excludes them) are removed here, once the page count
+// is final — after the overflow audit, which may add a page.
+function applyExcludeLast(configs) {
+  const pages = document.body.querySelectorAll('.pages--page');
+  const last = pages[pages.length - 1];
+  if (!last) return;
+  if (configs.header.some(c => c.excludeLast)) {
+    const header = last.querySelector('.pages--header');
+    if (header) header.remove();
+  }
+  if (configs.footer.some(c => c.excludeLast)) {
+    const footer = last.querySelector('.pages--footer');
+    if (footer) footer.remove();
+  }
+}
+
+// Safety net for heights that change AFTER pagination (a late re-typeset, a
+// font swap, ...): an element whose box no longer fits in the content slot
+// is clipped by the page's bottom margin. Push the overflowing trailing
+// elements to the next page instead (creating one if there is none), so the
+// final layout never clips content. The overflow is measured on border-boxes:
+// a trailing margin past the slot is whitespace, not content, and stays put.
+function fixOverflowingPages(configs) {
+  let movedAny = false;
+  for (;;) {
+    const pages = Array.from(document.body.querySelectorAll('.pages--page'));
+    let moved = false;
+    for (let i = 0; i < pages.length && !moved; i++) {
+      const content = pages[i].querySelector('.pages--content');
+      if (!content) continue;
+      const slotTop = content.getBoundingClientRect().top;
+      // Movable = its box no longer fits in the slot AND it can fit alone on
+      // a fresh page (an element taller than the whole slot fits nowhere:
+      // moving it would only shift the overflow and loop forever).
+      const overflowed = Array.from(content.children).filter(k => {
+        const r = k.getBoundingClientRect();
+        return r.bottom - slotTop > content.clientHeight + 0.5
+          && r.height <= content.clientHeight;
+      });
+      if (overflowed.length === 0) continue;
+      let next = pages[i + 1];
+      if (!next) {
+        next = createPage(document.body);
+        layoutPage(next, configs, pages.length);
+      }
+      const nextContent = next.querySelector('.pages--content');
+      // Prepend: in document order these elements belong at the TOP of the
+      // next page, before its own content (which follows them in the flow).
+      overflowed.forEach(k => nextContent.insertBefore(k, nextContent.firstChild));
+      moved = true;
+    }
+    if (!moved) break;
+    movedAny = true;
+  }
+  return movedAny;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   makeScopes(document.body);
   // Paragraphs are built before MathJax typesets, so a formula script (with
   // .pages--as-inline) is wrapped in its <p> before MathJax replaces it.
   autoParagraph(document.body);
-  const finish = () => {
-    makePages();
+  // Glue every last word to its closing punctuation (no-break space) so it
+  // can never be stranded alone at the start of a line. Runs before makePages
+  // so the overflow measurements see the final wrapping.
+  noOrphanPunct(document.body);
+  whenMathJaxDone().then(() => {
+    const configs = makePages();
+    fixOverflowingPages(configs);
+    applyExcludeLast(configs);
     applyPagination();
+    // Page numbers change the footer content: the footer can grow by a
+    // pixel, shrinking the content slot and clipping a trailing element.
+    // Re-audit; if pages changed, the exclusion and the numbers must follow.
+    let pass = 0;
+    while (fixOverflowingPages(configs) && pass++ < 5) {
+      applyExcludeLast(configs);
+      applyPagination();
+    }
+    imposeBooklet();
     window.__pagesReadyResolve();
-  };
-  if (window.MathJax && window.MathJax.startup && hasMath) {
-    // Resolves once MathJax has finished typesetting; .catch paginates anyway
-    // if MathJax fails (CDN down, render error).
-    window.MathJax.startup.promise.then(finish).catch(finish);
-  } else {
-    finish();
-  }
+  }).catch(() => window.__pagesReadyResolve());
 });
